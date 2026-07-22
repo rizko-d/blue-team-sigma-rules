@@ -1,0 +1,43 @@
+title: DNS Tunneling Detection via High Entropy Subdomains
+id: 99999999-0000-1111-2222-444444444444
+status: test
+description: Detects potential DNS tunneling by identifying high entropy subdomains in DNS queries
+references:
+  - https://attack.mitre.org/techniques/T1071.004/
+  - https://blog.cloudflare.com/detecting-dns-tunneling/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.command-and-control
+  - attack.t1071.004
+  - attack.exfiltration
+  - attack.t1048
+logsource:
+  category: dns_query
+  product: windows
+detection:
+  selection:
+    QueryType: 'A'
+  filter_legitimate:
+    QueryName|endswith:
+      - '.com'
+      - '.net'
+      - '.org'
+      - '.io'
+      - '.co'
+      - '.local'
+      - '.internal'
+      - '.corp'
+  filter_cdn:
+    QueryName|contains:
+      - 'cdn.'
+      - 'akamaiedge.'
+      - 'cloudfront.'
+      - 'azureedge.'
+      - 'fastly.'
+  entropy_check:
+    QueryName|regex: '^[a-zA-Z0-9]{20,}\.'
+  condition: selection and not filter_legitimate and not filter_cdn and entropy_check
+falsepositives:
+  - Legitimate CDN or auto-generated subdomains
+level: medium

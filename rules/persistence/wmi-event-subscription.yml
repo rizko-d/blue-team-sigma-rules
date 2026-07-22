@@ -1,0 +1,36 @@
+title: WMI Persistence via Event Subscription
+id: ffffffff-aaaa-bbbb-cccc-555555555555
+status: test
+description: Detects WMI persistence via __EventFilter and __EventConsumer creation
+references:
+  - https://attack.mitre.org/techniques/T1546.003/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.persistence
+  - attack.t1546.003
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_powershell:
+    Image|endswith:
+      - \\powershell.exe
+      - \\pwsh.exe
+    CommandLine|contains|all:
+      - 'Set-WmiInstance'
+      - '__EventFilter'
+  selection_wmic:
+    Image|endswith: \\wmic.exe
+    CommandLine|contains:
+      - '__EventFilter'
+  selection_wmi_consumer:
+    CommandLine|contains|any:
+      - '__EventConsumer'
+      - 'CommandLineEventConsumer'
+      - 'ActiveScriptEventConsumer'
+  condition: (selection_powershell or selection_wmic) and selection_wmi_consumer
+falsepositives:
+  - Legitimate WMI configuration
+level: high
+

@@ -1,0 +1,34 @@
+title: Suspicious Regsvr32 Execution - COM Scriptlet
+id: 22222222-3333-4444-5555-666666666666
+status: test
+description: Detects regsvr32.exe executing remote scriptlets (Squiblydoo) or suspicious DLL registration
+references:
+  - https://attack.mitre.org/techniques/T1218.010/
+  - https://lolbas-project.github.io/lolbas/Binaries/Regsvr32/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.defense-evasion
+  - attack.t1218.010
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_regsvr32:
+    Image|endswith: '\regsvr32.exe'
+  selection_remote_scriptlet:
+    CommandLine|contains|all:
+      - '/s'
+      - '/n'
+      - '/u'
+      - 'http'
+      - '.sct'
+  selection_suspicious_dll:
+    CommandLine|contains|all:
+      - '/s'
+      - '.dll'
+      - 'AppData'
+  condition: selection_regsvr32 and (1 of selection_*)
+falsepositives:
+  - Legitimate software installation
+level: high

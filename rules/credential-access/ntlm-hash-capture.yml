@@ -1,0 +1,38 @@
+title: NTLM Hash Capture - Inveigh or Responder Detection
+id: bbbbbbbb-aaaa-cccc-dddd-111111111111
+status: test
+description: Detects use of Inveigh or similar tools for NTLM hash capture
+references:
+  - https://attack.mitre.org/techniques/T1557.001/
+  - https://github.com/Kevin-Robertson/Inveigh
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.credential-access
+  - attack.t1557.001
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_inveigh:
+    Image|endswith:
+      - \\powershell.exe
+      - \\pwsh.exe
+    CommandLine|contains|any:
+      - 'Inveigh'
+      - 'Start-Inveigh'
+      - 'Invoke-Inveigh'
+  selection_responder:
+    CommandLine|contains|any:
+      - 'LLMNR'
+      - 'NBT-NS'
+      - 'mDNS'
+  selection_ps_responder:
+    Image|endswith:
+      - \\powershell.exe
+      - \\pwsh.exe
+  condition: selection_inveigh or (selection_responder and selection_ps_responder)
+falsepositives:
+  - Authorized penetration tests
+level: high
+

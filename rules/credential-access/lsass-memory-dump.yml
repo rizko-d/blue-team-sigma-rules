@@ -1,0 +1,33 @@
+title: LSASS Memory Dump via Comsvcs.dll or Rundll32
+id: 33333333-4444-5555-6666-777777777777
+status: test
+description: Detects LSASS memory dump using comsvcs.dll MiniDump or rundll32.exe
+references:
+  - https://attack.mitre.org/techniques/T1003.001/
+  - https://github.com/gtworek/PSBits/blob/master/Misc/ComsvcsDLL.md
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.credential-access
+  - attack.t1003.001
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_comsvcs:
+    Image|endswith:
+      - '\rundll32.exe'
+      - '\comsvcs.dll'
+    CommandLine|contains|all:
+      - 'MiniDump'
+      - 'lsass'
+  selection_procdump:
+    Image|endswith: '\procdump.exe'
+    CommandLine|contains: 'lsass'
+  selection_sql_dumper:
+    Image|endswith: '\sqldumper.exe'
+    CommandLine|contains: 'lsass'
+  condition: 1 of selection_*
+falsepositives:
+  - Legitimate debugging/troubleshooting
+level: critical

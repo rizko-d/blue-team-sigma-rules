@@ -1,0 +1,47 @@
+title: Suspicious Service Installation - Living Off The Land
+id: 99999999-0000-1111-2222-333333333333
+status: test
+description: Detects service installation using sc.exe or PowerShell with suspicious binaries
+references:
+  - https://attack.mitre.org/techniques/T1543.003/
+  - https://lolbas-project.github.io/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.persistence
+  - attack.t1543.003
+  - attack.privilege-escalation
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_sc:
+    Image|endswith: '\sc.exe'
+    CommandLine|contains: 'create'
+  selection_powershell_service:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+    CommandLine|contains|all:
+      - 'New-Service'
+      - '-BinaryPathName'
+  selection_suspicious_binary:
+    CommandLine|contains|any:
+      - 'appdata\\'
+      - 'programdata\\'
+      - 'temp\\'
+      - 'public\\'
+      - 'powershell'
+      - 'cmd.exe'
+      - 'rundll32'
+      - 'regsvr32'
+      - 'mshta'
+      - 'wscript'
+      - 'cscript'
+  selection_binpath_spaces:
+    CommandLine|contains: 'binpath= '
+    CommandLine|contains: ' '
+  condition: (1 of selection_sc, selection_powershell_service) and (1 of selection_suspicious_binary, selection_binpath_spaces)
+falsepositives:
+  - Legitimate service installation
+level: high

@@ -1,0 +1,36 @@
+title: HTML Smuggling via MHTML/HTA Handler
+id: 2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e
+status: test
+description: Detects execution of MHTML or HTA files via mshta.exe or Internet Explorer, commonly used in HTML smuggling attacks.
+references:
+  - https://attack.mitre.org/techniques/T1204/002/
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1204.002/T1204.002.md
+  - https://www.microsoft.com/en-us/security/blog/2022/03/02/html-smuggling-campaigns/
+author: Rizko Febri Rachmayadi
+date: 2024-02-10
+modified: 2024-06-15
+tags:
+  - attack.initial-access
+  - attack.t1204.002
+  - attack.defense-evasion
+  - attack.t1218.005
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_mshta:
+    Image|endswith: '\mshta.exe'
+    CommandLine|contains|all:
+      - '.mht'
+  selection_hta:
+    Image|endswith: '\mshta.exe'
+    CommandLine|contains: '.hta'
+  selection_ie:
+    Image|endswith: '\iexplore.exe'
+    CommandLine|contains|all:
+      - '.mht'
+  condition: 1 of selection_*
+falsepositives:
+  - Legitimate HTA applications
+  - Internal tools using MHTML format
+level: high

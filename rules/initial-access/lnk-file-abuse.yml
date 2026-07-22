@@ -1,0 +1,42 @@
+title: LNK File Abuse - Shortcut Execution
+id: 99999999-0000-1111-2222-555555555555
+status: test
+description: Detects suspicious LNK file execution via command line or Explorer
+references:
+  - https://attack.mitre.org/techniques/T1547.009/
+  - https://posts.specterops.io/shortcut-deception-64e14a45f8c
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.persistence
+  - attack.t1547.009
+  - attack.initial-access
+  - attack.t1204.002
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_lnk_cli:
+    Image|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+      - '\pwsh.exe'
+      - '\wscript.exe'
+      - '\cscript.exe'
+    CommandLine|contains|all:
+      - '.lnk'
+      - ' '
+  selection_explorer:
+    Image|endswith: '\explorer.exe'
+    CommandLine|contains: '.lnk'
+  selection_suspicious_lnk_path:
+    CommandLine|contains|any:
+      - 'appdata\\'
+      - 'temp\\'
+      - 'downloads\\'
+      - 'public\\'
+      - 'programdata\\'
+  condition: (selection_lnk_cli or selection_explorer) and selection_suspicious_lnk_path
+falsepositives:
+  - User clicking legitimate shortcuts
+level: medium

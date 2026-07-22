@@ -1,0 +1,40 @@
+title: Suspicious Registry Run Key Modification
+id: 55555555-ffff-aaaa-bbbb-000000000001
+status: test
+description: Detects modification of registry Run/RunOnce keys with suspicious file paths
+references:
+  - https://attack.mitre.org/techniques/T1547.001/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.persistence
+  - attack.t1547.001
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_reg:
+    Image|endswith: \\reg.exe
+    CommandLine|contains: 'add'
+  selection_run_key:
+    CommandLine|contains|any:
+      - '\\Microsoft\\Windows\\CurrentVersion\\Run'
+      - '\\Microsoft\\Windows\\CurrentVersion\\RunOnce'
+      - '\\Microsoft\\Windows\\CurrentVersion\\RunOnceEx'
+  suspicious_path:
+    CommandLine|contains|any:
+      - 'appdata'
+      - 'temp'
+      - 'public'
+      - 'programdata'
+      - 'powershell'
+      - 'cmd.exe'
+      - '.vbs'
+      - '.ps1'
+      - '.bat'
+      - '.hta'
+  condition: selection_reg and selection_run_key and suspicious_path
+falsepositives:
+  - Software installation
+level: high
+

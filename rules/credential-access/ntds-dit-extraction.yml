@@ -1,0 +1,35 @@
+title: NTDS.dit Extraction via VSSAdmin or NinjaCopy
+id: eeeeeeee-bbbb-ffff-aaaa-444444444444
+status: test
+description: Detects extraction of NTDS.dit via VSSAdmin shadow copy or similar tools
+references:
+  - https://attack.mitre.org/techniques/T1003.003/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.credential-access
+  - attack.t1003.003
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_vssadmin:
+    Image|endswith: \\vssadmin.exe
+    CommandLine|contains|all:
+      - 'create'
+      - 'shadow'
+  selection_copy:
+    Image|endswith:
+      - \\cmd.exe
+      - \\powershell.exe
+    CommandLine|contains:
+      - 'ntds.dit'
+  selection_diskshadow:
+    Image|endswith: \\diskshadow.exe
+  selection_ninjacopy:
+    CommandLine|contains: 'NinjaCopy'
+  condition: (selection_vssadmin and selection_copy) or selection_diskshadow or selection_ninjacopy
+falsepositives:
+  - System backup operations
+level: critical
+

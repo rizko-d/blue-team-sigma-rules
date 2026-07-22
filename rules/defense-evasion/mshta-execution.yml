@@ -1,0 +1,48 @@
+title: MSHTA Execution - HTML Application Abuse
+id: 99999999-0000-1111-2222-666666666666
+status: test
+description: Detects suspicious MSHTA execution with remote content or script execution
+references:
+  - https://attack.mitre.org/techniques/T1218.005/
+  - https://lolbas-project.github.io/lolbas/Binaries/Mshta/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.defense-evasion
+  - attack.t1218.005
+  - attack.execution
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: \\mshta.exe
+  remote_pattern:
+    CommandLine|contains:
+      - 'http://'
+      - 'https://'
+      - 'ftp://'
+  script_pattern:
+    CommandLine|contains:
+      - 'vbscript:'
+      - 'javascript:'
+      - 'Execute('
+      - 'Eval('
+      - 'CreateObject('
+      - 'WScript.Shell'
+      - 'WScript.Network'
+      - 'ADODB.Stream'
+      - 'Microsoft.XMLHTTP'
+      - 'WinHttp.WinHttpRequest'
+  suspicious_path:
+    CommandLine|contains:
+      - 'appdata\\\\'
+      - 'temp\\\\'
+      - 'downloads\\\\'
+      - 'public\\\\'
+      - 'programdata\\\\'
+  condition: selection and (remote_pattern or script_pattern or suspicious_path)
+falsepositives:
+  - Legitimate HTA applications
+level: high
+

@@ -1,0 +1,42 @@
+title: Suspicious Scheduled Task Creation - Persistence
+id: 44444444-5555-6666-7777-888888888888
+status: test
+description: Detects suspicious scheduled task creation for persistence (T1053.005)
+references:
+  - https://attack.mitre.org/techniques/T1053.005/
+  - https://www.elastic.co/guide/en/security/current/scheduled-task-creation.html
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.persistence
+  - attack.t1053.005
+  - attack.privilege-escalation
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_schtasks:
+    Image|endswith: '\schtasks.exe'
+    CommandLine|contains: '/create'
+  selection_suspicious_task:
+    CommandLine|contains|any:
+      - 'system32\\tasks\\'
+      - 'appdata\\'
+      - 'programdata\\'
+      - 'temp\\'
+      - 'powershell'
+      - 'cmd /c'
+      - 'wscript'
+      - 'cscript'
+      - 'mshta'
+      - 'regsvr32'
+      - 'rundll32'
+  selection_highest_priv:
+    CommandLine|contains|all:
+      - '/rl'
+      - 'highest'
+  condition: selection_schtasks and (1 of selection_suspicious_task or selection_highest_priv)
+falsepositives:
+  - Legitimate software installation/updates
+  - Administrative task automation
+level: high

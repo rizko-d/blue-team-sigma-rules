@@ -1,0 +1,21 @@
+# Python cache
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Build artifacts
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local config (credentials, env)
+.env
+*.local

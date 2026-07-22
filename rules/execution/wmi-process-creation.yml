@@ -1,0 +1,48 @@
+title: WMI Process Creation via WMIC or PowerShell
+id: 5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b
+status: test
+description: |
+  Detects process creation via WMI (WMIC or PowerShell Invoke-WmiMethod/CimMethod),
+  commonly used for lateral movement and execution.
+references:
+  - https://attack.mitre.org/techniques/T1047/
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1047/T1047.md
+author: Rizko Febri Rachmayadi
+date: 2024-02-20
+modified: 2024-06-15
+tags:
+  - attack.execution
+  - attack.t1047
+  - attack.lateral-movement
+  - attack.t1021.004
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_wmic:
+    Image|endswith: '\wmic.exe'
+    CommandLine|contains|all:
+      - 'process'
+      - 'call'
+      - 'create'
+  selection_powershell_wmi:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+    CommandLine|contains|all:
+      - 'Invoke-WmiMethod'
+      - 'Win32_Process'
+      - 'Create'
+  selection_powershell_cim:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+    CommandLine|contains|all:
+      - 'Invoke-CimMethod'
+      - 'Win32_Process'
+      - 'Create'
+  condition: 1 of selection_*
+falsepositives:
+  - Legitimate administrative WMI usage
+  - System management tools
+level: medium

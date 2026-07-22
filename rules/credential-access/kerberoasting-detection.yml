@@ -1,0 +1,31 @@
+title: Kerberoasting Detection - SPN Request Anomalies
+id: 88888888-9999-0000-1111-222222222222
+status: test
+description: Detects potential Kerberoasting via anomalous TGS-REQ (Event ID 4769) patterns
+references:
+  - https://attack.mitre.org/techniques/T1558.003/
+  - https://posts.specterops.io/kerberoasting-without-t1208-10a5e5e9b5d6
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.credential-access
+  - attack.t1558.003
+logsource:
+  category: security_event
+  product: windows
+detection:
+  selection_tgs_req:
+    EventID: 4769
+  selection_service_account:
+    TargetUserName|endswith: '$'
+    ServiceName|contains: '/'
+  filter_known_services:
+    ServiceName|contains|any:
+      - 'HOST/'
+      - 'RestrictedKrbHost/'
+      - 'TERMSRV/'
+      - 'WSMAN/'
+  condition: selection_tgs_req and selection_service_account and not filter_known_services
+falsepositives:
+  - Legitimate service ticket requests
+level: medium

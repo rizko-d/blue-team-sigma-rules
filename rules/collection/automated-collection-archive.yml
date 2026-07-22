@@ -1,0 +1,43 @@
+title: Automated Collection - Archive Utility Abuse
+id: 99999999-aaaa-bbbb-cccc-888888888888
+status: test
+description: Detects use of archive utilities to stage collected data for exfiltration
+references:
+  - https://attack.mitre.org/techniques/T1119/
+  - https://attack.mitre.org/techniques/T1560/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.collection
+  - attack.t1119
+  - attack.t1560
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_7zip:
+    Image|endswith: \\7z.exe
+    CommandLine|contains: 'a '
+  selection_winrar:
+    Image|endswith:
+      - \\rar.exe
+      - \\WinRAR.exe
+  selection_powershell_compress:
+    Image|endswith:
+      - \\powershell.exe
+      - \\pwsh.exe
+    CommandLine|contains|any:
+      - 'Compress-Archive'
+      - 'System.IO.Compression'
+  selection_makecab:
+    Image|endswith: \\makecab.exe
+  selection_path:
+    CommandLine|contains|any:
+      - 'Desktop\\'
+      - 'Documents\\'
+      - 'Downloads\\'
+  condition: (selection_7zip or selection_winrar or selection_powershell_compress or selection_makecab) and selection_path
+falsepositives:
+  - User compressing files for sharing
+level: medium
+

@@ -1,0 +1,50 @@
+title: Active Directory Reconnaissance via PowerShell
+id: 11111111-bbbb-cccc-dddd-666666666666
+status: test
+description: Detects suspicious Active Directory enumeration using PowerShell cmdlets
+references:
+  - https://attack.mitre.org/techniques/T1087.002/
+  - https://github.com/PowerShellMafia/PowerSploit
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.discovery
+  - attack.t1087.002
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith:
+      - \\powershell.exe
+      - \\pwsh.exe
+  ad_recon_cmdlets:
+    CommandLine|contains|any:
+      - 'Get-ADUser'
+      - 'Get-ADComputer'
+      - 'Get-ADGroup'
+      - 'Get-ADGroupMember'
+      - 'Get-ADDomain'
+      - 'Get-ADDomainController'
+      - 'Get-ADForest'
+      - 'Get-ADTrust'
+      - 'Get-ADObject'
+      - 'Get-NetUser'
+      - 'Get-NetComputer'
+      - 'Get-NetGroup'
+      - 'Get-NetDomain'
+      - 'Get-NetForest'
+      - 'Get-NetDomainController'
+      - 'Get-NetGPO'
+      - 'Invoke-ShareFinder'
+      - 'Invoke-ACLScanner'
+  filter_flag:
+    CommandLine|contains|any:
+      - '-Filter'
+      - '-Identity'
+  condition: selection and ad_recon_cmdlets and not filter_flag
+falsepositives:
+  - Legitimate administrative tasks
+  - Help desk troubleshooting
+level: medium
+

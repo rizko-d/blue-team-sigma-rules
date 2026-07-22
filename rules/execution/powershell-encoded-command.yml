@@ -1,0 +1,38 @@
+title: PowerShell Encoded Command Execution
+id: 77777777-8888-9999-0000-111111111111
+status: test
+description: Detects PowerShell execution with encoded commands (base64)
+references:
+  - https://attack.mitre.org/techniques/T1059.001/
+  - https://blog.f-secure.com/powershell-encoded-commands/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.execution
+  - attack.t1059.001
+  - attack.defense-evasion
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_powershell:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+  selection_encoded:
+    CommandLine|contains|any:
+      - '-enc'
+      - '-encodedcommand'
+      - '-e '
+  selection_bypass:
+    CommandLine|contains|any:
+      - '-nop'
+      - '-noni'
+      - '-w hidden'
+      - '-windowstyle hidden'
+      - 'bypass'
+  condition: selection_powershell and (selection_encoded or selection_bypass)
+falsepositives:
+  - Legitimate administrative scripts
+  - Some EDR/AV solutions
+level: medium

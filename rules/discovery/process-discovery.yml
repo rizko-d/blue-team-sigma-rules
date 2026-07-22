@@ -1,0 +1,41 @@
+title: Suspicious Process Discovery - Reconnaissance
+id: 99999999-dddd-eeee-ffff-444444444445
+status: test
+description: Detects suspicious system discovery commands used during reconnaissance
+references:
+  - https://attack.mitre.org/techniques/T1057/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.discovery
+  - attack.t1057
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_tasklist:
+    Image|endswith: \\tasklist.exe
+    CommandLine|contains: '/v'
+  selection_net:
+    Image|endswith: \\net.exe
+    CommandLine|contains|any:
+      - 'user'
+      - 'group'
+      - 'localgroup'
+      - 'accounts'
+      - 'view'
+      - 'share'
+      - 'use'
+      - 'session'
+  selection_whoami:
+    Image|endswith: \\whoami.exe
+    CommandLine|contains|any:
+      - '/all'
+      - '/priv'
+      - '/groups'
+  condition: 1 of selection_*
+falsepositives:
+  - Help desk activity
+  - System administration
+level: low
+

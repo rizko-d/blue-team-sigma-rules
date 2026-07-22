@@ -1,0 +1,32 @@
+title: Exfiltration over SMB - Suspicious File Transfer
+id: 22222222-cccc-dddd-eeee-777777777777
+status: test
+description: Detects data exfiltration over SMB shares to external IPs
+references:
+  - https://attack.mitre.org/techniques/T1048/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.exfiltration
+  - attack.t1048
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_copy:
+    Image|endswith: \\cmd.exe
+    CommandLine|contains|all:
+      - 'copy'
+      - '\\\\'
+      - '.exe'
+  selection_xcopy:
+    Image|endswith: \\xcopy.exe
+    CommandLine|contains: '\\\\'
+  selection_robocopy:
+    Image|endswith: \\robocopy.exe
+    CommandLine|contains: '\\\\'
+  condition: selection_copy or selection_xcopy or selection_robocopy
+falsepositives:
+  - File server migrations
+level: medium
+

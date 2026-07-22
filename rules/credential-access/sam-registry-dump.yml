@@ -1,0 +1,34 @@
+title: SAM Registry Dump via Reg.exe
+id: cccccccc-eeee-dddd-ffff-222222222222
+status: test
+description: Detects SAM and SYSTEM registry hive dumping via reg.exe
+references:
+  - https://attack.mitre.org/techniques/T1003.002/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.credential-access
+  - attack.t1003.002
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_reg:
+    Image|endswith: \\reg.exe
+  selection_save:
+    CommandLine|contains: 'save'
+  selection_hive:
+    CommandLine|contains|any:
+      - 'sam'
+      - 'system'
+      - 'security'
+  exclusion_legit:
+    CommandLine|contains|any:
+      - 'system32'
+      - 'windows defender'
+      - 'windows\\system32'
+  condition: selection_reg and selection_save and selection_hive and not exclusion_legit
+falsepositives:
+  - Legitimate backup operations
+level: critical
+

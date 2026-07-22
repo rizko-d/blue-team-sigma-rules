@@ -1,0 +1,30 @@
+title: DCOM Lateral Movement - MMC20.Application or ShellWindows
+id: 66666666-7777-8888-9999-000000000000
+status: test
+description: Detects DCOM lateral movement via MMC20.Application or ShellWindows
+references:
+  - https://attack.mitre.org/techniques/T1021.003/
+  - https://enigma0x3.net/2017/01/05/lateral-movement-using-the-mmc20-application-com-object/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.lateral-movement
+  - attack.t1021.003
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_mmc20:
+    ParentImage|endswith: '\mmc.exe'
+    Image|endswith: '\cmd.exe'
+    CommandLine|contains: '/c'
+  selection_shellwindows:
+    ParentImage|endswith: '\explorer.exe'
+    Image|endswith: '\cmd.exe'
+    CommandLine|contains|all:
+      - '/c'
+      - '\\\\'
+  condition: 1 of selection_*
+falsepositives:
+  - Legitimate administrative activity
+level: high

@@ -1,0 +1,34 @@
+title: Command-Line Obfuscation Detection
+id: aaaaaaaa-eeee-ffff-aaaa-555555555556
+status: test
+description: |
+  Detects command-line obfuscation techniques: caret insertion, double quotes,
+  reverse strings, environment variable expansion.
+references:
+  - https://attack.mitre.org/techniques/T1027/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.defense-evasion
+  - attack.t1027
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_caret:
+    CommandLine|contains: '^'
+  selection_reverse:
+    CommandLine|contains|any:
+      - '.split'
+      - '.reverse'
+      - '.join'
+      - '-join'
+  selection_env_expansion:
+    CommandLine|contains|all:
+      - 'set'
+      - '&&'
+  condition: 1 of selection_*
+falsepositives:
+  - Batch scripts with escape characters
+level: medium
+

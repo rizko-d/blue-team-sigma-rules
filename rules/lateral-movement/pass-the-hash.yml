@@ -1,0 +1,36 @@
+title: Pass-the-Hash Detection - NTLM Logon Type 3
+id: 33333333-dddd-eeee-ffff-888888888888
+status: test
+description: Detects potential Pass-the-Hash attacks via NTLM logon type 3 with admin accounts
+references:
+  - https://attack.mitre.org/techniques/T1550.002/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.lateral-movement
+  - attack.t1550.002
+logsource:
+  category: security_event
+  product: windows
+detection:
+  selection:
+    EventID: 4624
+    LogonType: 3
+    AuthenticationPackageName: 'NTLM'
+  admin_share:
+    ProcessName|contains:
+      - 'Admin'
+      - 'IPC'
+      - 'C'
+  known_tools:
+    ProcessName|contains|any:
+      - 'wmiexec'
+      - 'smbexec'
+      - 'psexec'
+      - 'atexec'
+  condition: selection and (admin_share or known_tools)
+falsepositives:
+  - Service account authentication
+  - Scheduled tasks
+level: medium
+

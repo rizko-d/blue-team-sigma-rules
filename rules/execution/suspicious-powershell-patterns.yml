@@ -1,0 +1,55 @@
+title: "Suspicious PowerShell Execution Patterns"
+id: 4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a
+status: test
+description: |
+  Detects suspicious PowerShell invocation patterns commonly used by attackers:
+  encoded commands, execution policy bypass, hidden windows, non-interactive mode.
+references:
+  - https://attack.mitre.org/techniques/T1059/001/
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.001/T1059.001.md
+  - https://blog.palantir.com/taming-powershell-3-1b0e5b8b5a8
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+modified: 2024-06-15
+tags:
+  - attack.execution
+  - attack.t1059.001
+  - attack.defense-evasion
+  - attack.t1027
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_encoded:
+    CommandLine|contains: '-enc'
+  selection_bypass:
+    CommandLine|contains|all:
+      - '-ep'
+      - 'bypass'
+  selection_hidden:
+    CommandLine|contains: '-w hidden'
+  selection_noninteractive:
+    CommandLine|contains: '-noni'
+  selection_noprofile:
+    CommandLine|contains: '-nop'
+  selection_noexit:
+    CommandLine|contains: '-noexit'
+  selection_download:
+    CommandLine|contains|all:
+      - 'iex'
+      - '('
+  selection_iex:
+    CommandLine|regex: 'i(ex|wr|nv|x)'
+  selection_compressed:
+    CommandLine|contains|all:
+      - '[System.Convert]'
+      - 'FromBase64String'
+  selection_amsi_bypass:
+    CommandLine|contains|all:
+      - 'amsi'
+      - 'initfailed'
+  condition: 1 of selection_*
+falsepositives:
+  - Legitimate administrative scripts using encoded commands
+  - Software deployment tools
+level: high

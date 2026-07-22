@@ -1,0 +1,24 @@
+title: DNS Exfiltration - Large TXT Queries
+id: 44444444-eeee-ffff-aaaa-999999999999
+status: test
+description: Detects potential DNS exfiltration via unusually large TXT record queries
+references:
+  - https://attack.mitre.org/techniques/T1048.001/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.exfiltration
+  - attack.t1048.001
+logsource:
+  category: dns_query
+  product: windows
+detection:
+  selection:
+    QueryType: 'TXT'
+  large_query:
+    QueryName|re: '^[a-zA-Z0-9+/=]{40,}'
+  condition: selection and large_query
+falsepositives:
+  - Email authentication (SPF/DKIM)
+level: medium
+

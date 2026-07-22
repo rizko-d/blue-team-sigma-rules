@@ -1,0 +1,35 @@
+title: Certutil Abuse - File Download or Decode
+id: bbbbbbbb-cccc-dddd-eeee-ffffffffffff
+status: test
+description: Detects certutil.exe used for downloading files or decoding base64
+references:
+  - https://attack.mitre.org/techniques/T1105/
+  - https://lolbas-project.github.io/lolbas/Binaries/Certutil/
+author: Rizko Febri Rachmayadi
+date: 2024-01-15
+tags:
+  - attack.execution
+  - attack.t1105
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: \\certutil.exe
+  download:
+    CommandLine|contains|all:
+      - 'urlcache'
+      - 'http'
+  decode:
+    CommandLine|contains|all:
+      - '-decode'
+      - '.txt'
+  encode:
+    CommandLine|contains|all:
+      - '-encode'
+      - '.exe'
+  condition: selection and (download or decode or encode)
+falsepositives:
+  - Certificate management tasks
+level: high
+
