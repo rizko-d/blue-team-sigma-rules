@@ -1,0 +1,50 @@
+title: GCP Cloud Storage Bucket Made Public
+id: e2f3d0a9-b1c2-4d56-8e3f-7f8091a2b3c4
+status: test
+description: |
+  Detects when a Google Cloud Storage bucket's IAM policy is modified to grant
+  allUsers or allAuthenticatedUsers access. Attackers expose buckets publicly
+  for data exfiltration or access sensitive data (T1530).
+references:
+  - https://attack.mitre.org/techniques/T1530/
+  - https://cloud.google.com/storage/docs/access-control/iam
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1530/T1530.md
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.discovery
+  - attack.t1530
+  - attack.collection
+logsource:
+  category: audit_logs
+  product: gcp
+detection:
+  selection_iam_update:
+    methodName|contains|any:
+      - 'storage.setIamPermissions'
+      - 'storage.buckets.update'
+      - 'storage.buckets.setIamPolicy'
+  selection_all_users:
+    resourceBinding.members|contains|any:
+      - 'allUsers'
+      - 'allAuthenticatedUsers'
+  selection_public_role:
+    resourceBinding.role|contains|any:
+      - 'roles/storage.objectViewer'
+      - 'roles/storage.objectAdmin'
+      - 'roles/storage.legacyBucketWriter'
+      - 'roles/storage.legacyBucketReader'
+  selection_public_acl:
+    methodName|contains|any:
+      - 'storage.objects.update'
+      - 'storage.buckets.update'
+    resource|contains:
+      - 'public'
+      - 'public-read'
+  condition: (selection_iam_update or selection_public_acl) and (1 of selection_all_users or selection_public_role)
+falsepositives:
+  - Intentional public hosting of static assets
+  - Authorized data sharing with external partners
+  - Google Cloud CDN or load balancer configurations
+level: high

@@ -1,0 +1,50 @@
+title: AWS CloudTrail Disabled or Logging Stopped
+id: f6d7e4a3-b5c8-4d01-9e0f-2a3b4c5d6e7f
+status: test
+description: |
+  Detects when AWS CloudTrail logging is disabled, trails are deleted, or log
+  delivery fails. Attackers stop audit logging to evade detection during and
+  after compromise (T1562.008).
+references:
+  - https://attack.mitre.org/techniques/T1562/008/
+  - https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-security-best-practices.html
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1562.008/T1562.008.md
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.defense-evasion
+  - attack.t1562.008
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  selection_disable_trail:
+    EventName|contains|any:
+      - 'StopLogging'
+      - 'DeleteTrail'
+      - 'UpdateTrail'
+  selection_disable_logging_all:
+    EventName|contains:
+      - 'StopLogging'
+    isMultiRegionTrail: true
+  selection_delivery_failed:
+    EventName:
+      - 'DeliveryFailed'
+    errorCode|contains:
+      - 'AccessDenied'
+      - 'BucketNotFound'
+  selection_modify_s3_bucket:
+    EventName|contains:
+      - 'PutBucketLogging'
+      - 'DeleteBucketPolicy'
+    bucketName|endswith:
+      - 'cloudtrail'
+      - 'aws-log'
+      - 'logs'
+  condition: 1 of selection_*
+falsepositives:
+  - Authorized trail rotation by security team
+  - Infrastructure teardown in non-production accounts
+  - Misconfigured cross-account delivery
+level: high

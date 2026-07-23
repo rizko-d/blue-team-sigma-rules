@@ -1,0 +1,60 @@
+title: Azure Guest User Added to Privileged Role
+id: c9a0b7d6-e8f1-4a34-9b1c-5d6e7f8091a2
+status: test
+description: |
+  Detects when a guest user (external/invited) is added to an Azure AD
+  privileged role such as Global Administrator, Privileged Role Administrator,
+  or Exchange Administrator. Attackers invite external users and assign roles
+  for persistence (T1078.004).
+references:
+  - https://attack.mitre.org/techniques/T1078/004/
+  - https://learn.microsoft.com/en-us/azure/active-directory/fundamentals/security-operations-privileged-identity-management
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.persistence
+  - attack.privilege-escalation
+  - attack.t1078.004
+logsource:
+  category: audit_logs
+  product: azure
+detection:
+  selection_invite:
+    OperationName|contains|any:
+      - 'Invite external user'
+      - 'Invite guest user'
+      - 'Add user'
+      - 'Bulk invite'
+      - 'Add guest'
+  selection_guest_target:
+    TargetResources.modifiedProperties.displayName|contains:
+      - 'UserType'
+    TargetResources.modifiedProperties.newValue|contains:
+      - 'Guest'
+  selection_privileged_role:
+    OperationName|contains:
+      - 'Add member to role'
+      - 'Activate role'
+      - 'Assign role'
+    TargetResources.modifiedProperties.newValue|contains|any:
+      - 'Global Administrator'
+      - 'Privileged Role Administrator'
+      - 'Exchange Administrator'
+      - 'SharePoint Administrator'
+      - 'User Administrator'
+      - 'Application Administrator'
+      - 'Conditional Access Administrator'
+      - 'Security Administrator'
+  selection_role_add:
+    OperationName|contains:
+      - 'Add eligible member to role'
+      - 'Add member to role'
+    Actor.userType|contains:
+      - 'Guest'
+  condition: (selection_invite and selection_guest_target) or selection_privileged_role or selection_role_add
+falsepositives:
+  - Legitimate partner/cross-organization collaboration
+  - Authorized MSP administration
+  - B2B collaboration setup by security team
+level: high

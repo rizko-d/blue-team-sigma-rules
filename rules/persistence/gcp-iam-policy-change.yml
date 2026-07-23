@@ -1,0 +1,49 @@
+title: GCP IAM Policy Change - Privilege Escalation
+id: f3a4e1b0-c2d3-4e67-8f4a-8f91a2b3c4d5
+status: test
+description: |
+  Detects modifications to IAM policies in GCP that grant broad permissions,
+  assign primitive roles (owner/editor/viewer), or add external principals.
+  Attackers escalate privileges by modifying IAM bindings (T1098).
+references:
+  - https://attack.mitre.org/techniques/T1098/
+  - https://cloud.google.com/iam/docs/understanding-roles
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1098/T1098.md
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.persistence
+  - attack.privilege-escalation
+  - attack.t1098
+logsource:
+  category: audit_logs
+  product: gcp
+detection:
+  selection_iam_change:
+    methodName|contains|any:
+      - 'SetIamPolicy'
+      - 'setIamPolicy'
+      - 'projects.setIamPolicy'
+      - 'organizations.setIamPolicy'
+  selection_primitive_role:
+    resourceBinding.role|contains|any:
+      - 'roles/owner'
+      - 'roles/editor'
+      - 'roles/viewer'
+  selection_admin_role:
+    resourceBinding.role|contains|any:
+      - 'roles/iam.securityAdmin'
+      - 'roles/iam.roleAdmin'
+      - 'roles/resourcemanager.projectIamAdmin'
+      - 'roles/resourcemanager.organizationAdmin'
+  selection_service_account_key:
+    methodName|contains|any:
+      - 'CreateServiceAccountKey'
+      - 'serviceAccounts.keys.create'
+  condition: selection_iam_change and (1 of selection_primitive_role or selection_admin_role or selection_service_account_key)
+falsepositives:
+  - Authorized GCP project configuration changes
+  - Infrastructure-as-Code deployments (Terraform/Deployment Manager)
+  - Onboarding new team members with appropriate roles
+level: critical

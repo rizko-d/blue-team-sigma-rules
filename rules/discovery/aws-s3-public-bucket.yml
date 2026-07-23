@@ -1,0 +1,46 @@
+title: AWS S3 Bucket Public Access or Data Exfiltration
+id: d4b5c2e1-f3a6-4b89-8c7d-0e1f2a3b4c5d
+status: test
+description: |
+  Detects AWS S3 bucket policy changes that grant public access, or large-scale
+  GetObject calls from anomalous sources. Attackers expose buckets for data
+  exfiltration or directly download sensitive data (T1530).
+references:
+  - https://attack.mitre.org/techniques/T1530/
+  - https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-logging.html
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1530/T1530.md
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.discovery
+  - attack.t1530
+  - attack.collection
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  selection_public_bucket:
+    EventName|contains|any:
+      - 'PutBucketAcl'
+      - 'PutBucketPolicy'
+      - 'PutBucketPublicAccessBlock'
+    requestParameters.bucketPolicy.Statement.Effect: 'Allow'
+    requestParameters.bucketPolicy.Statement.Principal: '*'
+  selection_public_read:
+    EventName|contains:
+      - 'GetObject'
+    requestParameters.bucketPolicy.Statement.Effect: 'Allow'
+    requestParameters.bucketPolicy.Statement.Principal: '*'
+  selection_public_acl:
+    EventName:
+      - 'PutBucketAcl'
+    requestParameters.AccessControlPolicy.AccessControlList.Grantee.URI|endswith:
+      - 'groups/global/AllUsers'
+      - 'groups/global/AuthenticatedUsers'
+  condition: 1 of selection_*
+falsepositives:
+  - Intentional public website hosting via S3 (e.g., static sites)
+  - Authorized cross-account data sharing
+  - DevOps automation for public assets
+level: high

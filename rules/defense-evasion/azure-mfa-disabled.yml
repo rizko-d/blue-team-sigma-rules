@@ -1,0 +1,60 @@
+title: Azure MFA Disabled for User Account
+id: d0b1c8e7-f9a2-4b45-9c2d-6e7f8091a2b3
+status: test
+description: |
+  Detects when multi-factor authentication (MFA) is disabled or authentication
+  methods are removed for a user account. Attackers disable MFA to weaken
+  authentication controls and facilitate credential access (T1556.006).
+references:
+  - https://attack.mitre.org/techniques/T1556/006/
+  - https://learn.microsoft.com/en-us/azure/active-directory/authentication/howto-mfa-userstates
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1556.006/T1556.006.md
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.defense-evasion
+  - attack.persistence
+  - attack.t1556.006
+logsource:
+  category: audit_logs
+  product: azure
+detection:
+  selection_mfa_disabled:
+    OperationName|contains|any:
+      - 'Disable Strong Authentication'
+      - 'Disable MFA'
+      - 'Disable Per-User MFA'
+      - 'Authentication methods reset'
+  selection_authentication_requirement_change:
+    OperationName|contains:
+      - 'Update authentication requirement'
+    TargetResources.modifiedProperties.newValue:
+      - 'perUserMfa'
+    TargetResources.modifiedProperties.oldValue:
+      - 'Enabled'
+  selection_ca_policy_disable:
+    OperationName|contains:
+      - 'Update conditional access policy'
+    TargetResources.modifiedProperties.newValue|contains:
+      - 'Off'
+    TargetResources.modifiedProperties.displayName|contains:
+      - 'state'
+  selection_mfa_method_removed:
+    OperationName|contains|any:
+      - 'Remove authentication method'
+      - 'Delete authentication method'
+      - 'Reset user authentication'
+    TargetResources.modifiedProperties.displayName|contains|any:
+      - 'Microsoft Authenticator'
+      - 'Phone App'
+      - 'Phone'
+      - 'Software Oath Token'
+      - 'FIDO2'
+      - 'Windows Hello'
+  condition: 1 of selection_*
+falsepositives:
+  - User account lifecycle operations (offboarding)
+  - Authorized authentication policy migration
+  - Break-glass account setup
+level: high

@@ -1,0 +1,55 @@
+title: AWS IAM Policy Modification - Privilege Escalation
+id: e5c6d3f2-a4b7-4c90-9d8e-1f2a3b4c5d6e
+status: test
+description: |
+  Detects modifications to IAM policies that grant broad permissions or attach
+  administrative policies to non-admin principals. Attackers escalate privileges
+  by modifying IAM policies (T1098) or creating backdoor roles.
+references:
+  - https://attack.mitre.org/techniques/T1098/
+  - https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1098/T1098.md
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.persistence
+  - attack.privilege-escalation
+  - attack.t1098
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  selection_policy_attach:
+    EventName|contains:
+      - 'AttachRolePolicy'
+      - 'AttachUserPolicy'
+      - 'AttachGroupPolicy'
+  selection_admin_policy:
+    requestParameters.policyArn|contains|any:
+      - 'AdministratorAccess'
+      - 'PowerUserAccess'
+      - 'IAMFullAccess'
+      - '*:*'
+  selection_policy_create:
+    EventName|contains:
+      - 'CreatePolicy'
+      - 'PutRolePolicy'
+      - 'PutUserPolicy'
+  selection_policy_permissive:
+    requestParameters.policyDocument.Statement.Effect: 'Allow'
+    requestParameters.policyDocument.Statement.Action:
+      - '*'
+      - 'iam:*'
+      - 'ec2:*'
+      - 's3:*'
+  selection_pass_role:
+    EventName:
+      - 'PassRole'
+    requestParameters.passRoleTo|iregex: 'ec2|lambda|ecs|batch'
+  condition: 1 of selection_*
+falsepositives:
+  - AWS CloudFormation/Terraform infrastructure deployments
+  - CI/CD pipeline role provisioning
+  - Authorized cross-account access setup
+level: high

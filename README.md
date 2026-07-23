@@ -2,8 +2,8 @@
 
 > **Author:** Rizko Febri Rachmayadi  
 > **Status:** Active Development  
-> **44 Sigma Rules** | **12/12 MITRE ATT&CK Tactic Coverage** | **43 Unique Techniques**  
-> **Not for production deployment** — educational/demonstration use only
+> **44 Sigma Rules** | **12/12 MITRE ATT&CK Tactic Coverage** | **55 Unique Techniques**  
+> **Cross-platform: Windows, Linux, macOS, AWS, Azure, GCP**
 
 ---
 
@@ -11,7 +11,7 @@
 
 A self-contained detection engineering portfolio demonstrating:
 - **Sigma rule authoring** across the full MITRE ATT&CK kill chain
-- **Cross-platform coverage**: Windows, Linux, and macOS detection rules
+- **Cross-platform coverage**: Windows, Linux, macOS, AWS, Azure, GCP
 - **Unit testing framework** for detection logic validation
 - **CI/CD pipeline** (GitHub Actions) for syntax validation, compilation, and coverage reporting
 - **Detection engineering methodology**: threat-informed, tested, documented
@@ -24,21 +24,25 @@ A self-contained detection engineering portfolio demonstrating:
 blue-team-sigma-rules/
 ├── .github/workflows/
 │   └── sigma-test.yml          # GitHub Actions CI pipeline
-├── rules/                      # 44 Sigma detection rules
+├── rules/                      # 55 Sigma detection rules
 │   ├── initial-access/         # 4 rules (T1204, T1547)
 │   ├── execution/              # 10 rules (T1059.001, T1059.004, T1047, T1218, T1105, T1197)
-│   ├── persistence/            # 7 rules (T1053, T1543, T1546, T1547)
+│   ├── persistence/            # 10 rules (T1053, T1543, T1546, T1547, T1098, T1078, T1098.002)
+│   │   ├── (+ AWS IAM, Azure Guest Role, Azure Admin Consent, GCP IAM)
 │   ├── privilege-escalation/   # 4 rules (T1068, T1548, T1053)
-│   ├── defense-evasion/        # 12 rules (T1218, T1027, T1197, T1070)
-│   ├── credential-access/      # 6 rules (T1003, T1557, T1558)
-│   ├── discovery/              # 2 rules (T1087, T1057)
+│   ├── defense-evasion/        # 15 rules (T1218, T1027, T1197, T1070, T1562, T1556)
+│   │   ├── (+ AWS CloudTrail, AWS SG Open, Azure MFA Disabled)
+│   ├── credential-access/      # 7 rules (T1003, T1557, T1558, T1078)
+│   │   ├── (+ GCP Service Account Key)
+│   ├── discovery/              # 4 rules (T1087, T1057, T1530)
+│   │   ├── (+ AWS S3 Public, GCP Bucket Public)
 │   ├── lateral-movement/       # 4 rules (T1047, T1021, T1550)
 │   ├── collection/             # 2 rules (T1119, T1560)
 │   ├── command-and-control/    # 2 rules (T1071, T1055)
 │   ├── exfiltration/           # 3 rules (T1048)
 │   └── impact/                 # 1 rule (T1490)
 ├── tests/
-│   └── test_rules.py           # 317 unit tests (7 tests per rule)
+│   └── test_rules.py           # 387 unit tests (7 tests per rule)
 ├── scripts/
 │   ├── check_mitre_coverage.py # Coverage analysis
 │   ├── validate_mitre_tags.py  # Tag validation
@@ -55,11 +59,11 @@ blue-team-sigma-rules/
 |--------|-------|-----------------|----------------|
 | **Initial Access** | 4 | HIGH(3), MEDIUM(1) | T1204.002, T1547.009 |
 | **Execution** | 10 | HIGH(6), MEDIUM(4) | T1059.001, T1059.004, T1047, T1218.003 |
-| **Persistence** | 7 | HIGH(6), MEDIUM(1) | T1053.005, T1543.003, T1543.002, T1543.001, T1546.003, T1547.001 |
-| **Privilege Escalation** | 4 | CRITICAL(1), HIGH(2), MEDIUM(1) | T1068, T1548.002, T1548.003 |
-| **Defense Evasion** | 12 | HIGH(8), MEDIUM(4) | T1218(.003/.005/.010/.011), T1027, T1070.004 |
-| **Credential Access** | 6 | CRITICAL(3), HIGH(2), MEDIUM(1) | T1003(.001/.002/.003/.008), T1557.001, T1558.003 |
-| **Discovery** | 2 | MEDIUM(1), LOW(1) | T1087.002, T1057 |
+| **Persistence** | 10 | HIGH(9), MEDIUM(1) | T1053.005, T1543.003, T1543.002, T1543.001, T1546.003, T1547.001, T1098, T1098.002, T1078.004 |
+| **Privilege Escalation** | 5 | CRITICAL(1), HIGH(3), MEDIUM(1) | T1068, T1548.002, T1548.003, T1098, T1078.004 |
+| **Defense Evasion** | 15 | HIGH(10), MEDIUM(5) | T1218(.003/.005/.010/.011), T1027, T1070.004, T1562.007, T1562.008, T1556.006 |
+| **Credential Access** | 7 | CRITICAL(3), HIGH(3), MEDIUM(1) | T1003(.001/.002/.003/.008), T1557.001, T1558.003, T1078.004 |
+| **Discovery** | 4 | HIGH(2), MEDIUM(1), LOW(1) | T1087.002, T1057, T1530 |
 | **Lateral Movement** | 4 | HIGH(2), MEDIUM(2) | T1047, T1021.003, T1550.002 |
 | **Collection** | 2 | MEDIUM(2) | T1119, T1560, T1560.001 |
 | **Command & Control** | 2 | HIGH(1), MEDIUM(1) | T1071.004, T1055 |
@@ -70,28 +74,39 @@ blue-team-sigma-rules/
 
 ## Highlighted Rules
 
-### Critical Severity (5 rules)
+### Critical Severity (6 rules)
 
-| Rule | Technique | Description |
-|------|-----------|-------------|
-| **LSASS Memory Dump** | T1003.001 | Detects LSASS credential dumping via comsvcs.dll, procdump, sqldumper |
-| **SAM Registry Dump** | T1003.002 | Detects SAM/SYSTEM/SECURITY hive export via reg.exe |
-| **NTDS.dit Extraction** | T1003.003 | Detects Active Directory database extraction via VSSAdmin or NinjaCopy |
-| **Shadow File Access** | T1003.008 | Detects /etc/shadow, /etc/passwd- access on Linux systems |
-| **Volume Shadow Copy Deletion** | T1490 | Detects VSS deletion — ransomware precursor |
+| Rule | Platform | Technique | Description |
+|------|----------|-----------|-------------|
+| **LSASS Memory Dump** | Windows | T1003.001 | Detects LSASS credential dumping via comsvcs.dll, procdump, sqldumper |
+| **SAM Registry Dump** | Windows | T1003.002 | Detects SAM/SYSTEM/SECURITY hive export via reg.exe |
+| **NTDS.dit Extraction** | Windows | T1003.003 | Detects Active Directory database extraction via VSSAdmin or NinjaCopy |
+| **Shadow File Access** | Linux | T1003.008 | Detects /etc/shadow, /etc/passwd- access on Linux systems |
+| **GCP IAM Policy Change** | GCP | T1098 | Primitive role grant, org admin changes to IAM policies |
+| **Volume Shadow Copy Deletion** | Windows | T1490 | Detects VSS deletion — ransomware precursor |
 
-### Cross-Platform Coverage (8 new rules)
+### Cross-Platform Coverage (18 new rules)
 
-| Rule | OS | Technique | Description |
-|------|----|-----------|-------------|
+| Rule | Platform | Technique | Description |
+|------|----------|-----------|-------------|
 | **Unix Shell Execution** | Linux | T1059.004 | Reverse shell, pipe-to-shell, encoded commands |
-| **macOS Shell Execution** | macOS | T1059.004/007 | osascript abuse, curl|sh, Gatekeeper bypass |
+| **macOS Shell Execution** | macOS | T1059.004/007 | osascript abuse, curl\|sh, Gatekeeper bypass |
 | **Systemd Service Creation** | Linux | T1543.002 | Malicious systemd unit file persistence |
 | **Launch Agent Persistence** | macOS | T1543.001 | LaunchAgent/LaunchDaemon plist abuse |
 | **Sudo Abuse** | Linux | T1548.003 | Sudo caching, sudoers modification, SUID abuse |
 | **Shadow File Access** | Linux | T1003.008 | Credential dumping via /etc/shadow |
 | **Log File Tampering** | Linux | T1070.004 | Log clearing, journalctl flushing, history removal |
-| **Data Staging via Archive** | Linux/macOS | T1560.001 | Suspicious tar/zip/7z of sensitive directories |
+| **Data Staging via Archive** | Linux/macOS | T1560.001 | Suspicious tar/zip/7z of sensitive dirs |
+| **AWS S3 Public Bucket** | AWS | T1530 | Public bucket ACL/policy changes |
+| **AWS IAM Policy Mod** | AWS | T1098 | Admin policy attach, pass role, permissive policy |
+| **AWS CloudTrail Disabled** | AWS | T1562.008 | Trail deletion, stop logging, delivery failures |
+| **AWS Security Group Open** | AWS | T1562.007 | 0.0.0.0/0 ingress on sensitive ports |
+| **Azure Admin Consent Grant** | Azure | T1098.002 | OAuth app admin consent with high-risk scopes |
+| **Azure Guest Privileged Role** | Azure | T1078.004 | Guest user elevated to Global Admin |
+| **Azure MFA Disabled** | Azure | T1556.006 | MFA removal, CA policy disable, auth method delete |
+| **GCP Bucket Public** | GCP | T1530 | allUsers access on Cloud Storage |
+| **GCP IAM Policy Change** | GCP | T1098 | Primitive role grant, org IAM changes |
+| **GCP Service Account Key** | GCP | T1078.004 | SA key creation/exfiltration |
 
 ### Defense Evasion Coverage (12 rules)
 The most heavily covered tactic. Rules detect:
@@ -182,8 +197,8 @@ sigmac -t elastic --format json rules/execution/unix-shell-execution.yml
 
 ### Coverage & Visibility
 - [x] Linux/macOS detection rules (T1059.004, T1543.002, T1548.003, T1003.008, T1070.004, T1543.001, T1560.001)
+- [x] **Cloud detection rules** (AWS CloudTrail, Azure Activity Logs, GCP Audit Logs)
 - [ ] **ATT&CK Navigator Layer JSON export** — visual coverage heatmap
-- [ ] **Cloud detection rules** (AWS CloudTrail, Azure Activity Logs, GCP Audit Logs)
 - [ ] **Container / Kubernetes runtime rules** — Falco-style (crypto-mining, container escape, kubectl abuse)
 
 ### Operational Realism

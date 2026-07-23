@@ -1,0 +1,54 @@
+title: Azure OAuth Admin Consent Grant Abuse
+id: b8f9a6c5-d7e0-4f23-9a0b-4c5d6e7f8091
+status: test
+description: |
+  Detects when an administrator grants tenant-wide consent to an OAuth
+  application with high-risk permissions. Attackers abuse admin consent grants
+  to establish persistence via malicious OAuth apps (T1098.002).
+references:
+  - https://attack.mitre.org/techniques/T1098/002/
+  - https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/grant-admin-consent
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1098.002/T1098.002.md
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.persistence
+  - attack.t1098.002
+logsource:
+  category: audit_logs
+  product: azure
+detection:
+  selection_consent_grant:
+    OperationName|contains|any:
+      - 'Consent to application'
+      - 'Grant admin consent'
+      - 'OAuth2PermissionGrant'
+      - 'Add delegated permission grant'
+  selection_high_risk_permission:
+    ResultDetail|contains|any:
+      - 'Mail.Read'
+      - 'Mail.Send'
+      - 'Files.ReadWrite.All'
+      - 'Sites.ReadWrite.All'
+      - 'User.ReadWrite.All'
+      - 'Directory.ReadWrite.All'
+      - 'Application.ReadWrite.All'
+      - 'Group.ReadWrite.All'
+      - 'RoleManagement.ReadWrite.Directory'
+  selection_external_app:
+    ResultDetail|contains|any:
+      - 'multi-tenant'
+      - 'multitenant'
+      - 'graphexternal'
+  selection_admin_consent:
+    OperationName|contains:
+      - 'Consent to application'
+    AdditionalDetails|contains:
+      - 'AdminConsent'
+  condition: selection_consent_grant and (1 of selection_high_risk_permission or selection_external_app or selection_admin_consent)
+falsepositives:
+  - Legitimate migration from AD FS or third-party IdP
+  - Office 365 integrated third-party applications
+  - Authorized security tooling (SIEM integration)
+level: high

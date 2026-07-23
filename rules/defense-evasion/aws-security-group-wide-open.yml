@@ -1,0 +1,51 @@
+title: AWS EC2 Security Group Wide-Open Ingress
+id: a7e8f5b4-c6d9-4e12-9f0a-3b4c5d6e7f80
+status: test
+description: |
+  Detects EC2 security group rules that allow unrestricted inbound access
+  (0.0.0.0/0) on sensitive ports. Attackers open security groups for lateral
+  movement, backdoor access, or data exfiltration (T1562.007).
+references:
+  - https://attack.mitre.org/techniques/T1562/007/
+  - https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1562.007/T1562.007.md
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.defense-evasion
+  - attack.t1562.007
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  selection_authorize_ingress:
+    EventName|contains:
+      - 'AuthorizeSecurityGroupIngress'
+      - 'AuthorizeSecurityGroupEgress'
+  selection_anywhere_ip:
+    requestParameters.ipPermissions.items.ipRanges.items.cidrIp|contains:
+      - '0.0.0.0/0'
+      - '::/0'
+  selection_sensitive_port:
+    requestParameters.ipPermissions.items.fromPort|contains|any:
+      - '22'
+      - '3389'
+      - '5432'
+      - '3306'
+      - '6379'
+      - '27017'
+      - '9200'
+      - '23'
+      - '21'
+  selection_anywhere_all:
+    requestParameters.ipPermissions.items.ipProtocol:
+      - '-1'
+    requestParameters.ipPermissions.items.ipRanges.items.cidrIp|contains:
+      - '0.0.0.0/0'
+  condition: (selection_authorize_ingress and selection_anywhere_ip) and (1 of selection_sensitive_port or selection_anywhere_all)
+falsepositives:
+  - Temporary administrative access authorized by security team
+  - Load balancer security groups for web services
+  - VPN or bastion host security groups
+level: high
