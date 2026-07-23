@@ -1,0 +1,601 @@
+{
+  "name": "Blue Team Sigma Rules - Coverage Heatmap",
+  "version": "4.5",
+  "domain": "enterprise-attack",
+  "description": "Detection coverage heatmap generated from 32 techniques covered by 67 Sigma rules. Covers Windows, Linux, macOS, AWS, Azure, and GCP platforms.",
+  "filters": {
+    "platforms": [
+      "Windows",
+      "Linux",
+      "macOS",
+      "AWS",
+      "Azure",
+      "GCP",
+      "Office 365",
+      "Containers"
+    ]
+  },
+  "sorting": 2,
+  "techniques": [
+    {
+      "techniqueID": "T1003",
+      "score": 4,
+      "color": "#ff8c66",
+      "comment": "4 rules — Shadow File Access - Linux Credential Dumping; LSASS Memory Dump via Comsvcs.dll or Rundll32; NTDS.dit Extraction via VSSAdmin or NinjaCopy; SAM Registry Dump via Reg.exe",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "4"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0006"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1021",
+      "score": 2,
+      "color": "#ffe6cc",
+      "comment": "2 rules — DCOM Lateral Movement - MMC20.Application or ShellWindows; WMI Process Creation via WMIC or PowerShell",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "2"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0002, TA0008"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1027",
+      "score": 2,
+      "color": "#ffe6cc",
+      "comment": "2 rules — Suspicious PowerShell Execution Patterns; Command-Line Obfuscation Detection",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "2"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0002, TA0005"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1047",
+      "score": 2,
+      "color": "#ffe6cc",
+      "comment": "2 rules — WMI Lateral Movement - Process Creation via WMIC; WMI Process Creation via WMIC or PowerShell",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "2"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0002, TA0008"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1048",
+      "score": 3,
+      "color": "#ff8c66",
+      "comment": "3 rules — DNS Tunneling Detection via High Entropy Subdomains; DNS Exfiltration - Large TXT Queries; Exfiltration over SMB - Suspicious File Transfer",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "3"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0010, TA0011"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1053",
+      "score": 1,
+      "color": "#ffe6cc",
+      "comment": "1 rule — Suspicious Scheduled Task Creation - Persistence",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "1"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0003, TA0004"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1055",
+      "score": 1,
+      "color": "#ffe6cc",
+      "comment": "1 rule — Cobalt Strike Named Pipe Detection",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "1"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0011"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1057",
+      "score": 1,
+      "color": "#ffe6cc",
+      "comment": "1 rule — Suspicious Process Discovery - Reconnaissance",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "1"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0007"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1059",
+      "score": 7,
+      "color": "#d9381e",
+      "comment": "7 rules — Suspicious Microsoft Office Child Process; PowerShell Download Cradle - IEX WebClient; Suspicious PowerShell Execution Patterns; Suspicious macOS Shell Execution and AppleScript; Suspicious macOS Shell Execution and AppleScript; Suspicious Unix Shell Execution Patterns; PowerShell Encoded Command Execution",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "7"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0001, TA0002, TA0005"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1068",
+      "score": 1,
+      "color": "#ffe6cc",
+      "comment": "1 rule — Print Spooler Exploit - PrintNightmare Detection",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "1"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0004"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1070",
+      "score": 1,
+      "color": "#ffe6cc",
+      "comment": "1 rule — Log File Tampering and Deletion - Linux",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "1"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0005"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1071",
+      "score": 1,
+      "color": "#ffe6cc",
+      "comment": "1 rule — DNS Tunneling Detection via High Entropy Subdomains",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "1"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0010, TA0011"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1078",
+      "score": 2,
+      "color": "#ffe6cc",
+      "comment": "2 rules — Azure Guest User Added to Privileged Role; GCP Service Account Key Creation or Download",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "2"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0003, TA0004, TA0006"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1087",
+      "score": 1,
+      "color": "#ffe6cc",
+      "comment": "1 rule — Active Directory Reconnaissance via PowerShell",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "1"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0007"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1098",
+      "score": 3,
+      "color": "#ff8c66",
+      "comment": "3 rules — Azure OAuth Admin Consent Grant Abuse; AWS IAM Policy Modification - Privilege Escalation; GCP IAM Policy Change - Privilege Escalation",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "3"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0003, TA0004"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1105",
+      "score": 2,
+      "color": "#ffe6cc",
+      "comment": "2 rules — Certutil Abuse - File Download or Decode; BITSAdmin Download - Transfer Job",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "2"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0002, TA0005"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1119",
+      "score": 1,
+      "color": "#ffe6cc",
+      "comment": "1 rule — Automated Collection - Archive Utility Abuse",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "1"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0009"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1197",
+      "score": 1,
+      "color": "#ffe6cc",
+      "comment": "1 rule — BITSAdmin Download - Transfer Job",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "1"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0005"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1204",
+      "score": 4,
+      "color": "#ff8c66",
+      "comment": "4 rules — ISO/Mount Image Execution via Explorer or PowerShell; Suspicious Microsoft Office Child Process; LNK File Abuse - Shortcut Execution; HTML Smuggling via MHTML/HTA Handler",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "4"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0001, TA0002, TA0003, TA0005"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1218",
+      "score": 7,
+      "color": "#d9381e",
+      "comment": "7 rules — ISO/Mount Image Execution via Explorer or PowerShell; HTML Smuggling via MHTML/HTA Handler; CMSTP Execution - UAC Bypass and Proxy Execution; Rundll32 Execution - Suspicious DLL or JavaScript; MSHTA Execution - HTML Application Abuse; Suspicious Mshta Execution; Suspicious Regsvr32 Execution - COM Scriptlet",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "7"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0001, TA0002, TA0005"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1490",
+      "score": 1,
+      "color": "#ffe6cc",
+      "comment": "1 rule — Volume Shadow Copy Deletion - Ransomware Precursor",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "1"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0040"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1530",
+      "score": 2,
+      "color": "#ffe6cc",
+      "comment": "2 rules — GCP Cloud Storage Bucket Made Public; AWS S3 Bucket Public Access or Data Exfiltration",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "2"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0007, TA0009"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1543",
+      "score": 3,
+      "color": "#ff8c66",
+      "comment": "3 rules — Systemd Service Creation for Persistence; Suspicious Service Installation - Living Off The Land; Launch Agent and Launch Daemon Persistence - macOS",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "3"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0003, TA0004"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1546",
+      "score": 2,
+      "color": "#ffe6cc",
+      "comment": "2 rules — WMI Lateral Movement - Process Creation via WMIC; WMI Persistence via Event Subscription",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "2"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0003, TA0008"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1547",
+      "score": 2,
+      "color": "#ffe6cc",
+      "comment": "2 rules — LNK File Abuse - Shortcut Execution; Suspicious Registry Run Key Modification",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "2"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0001, TA0003"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1548",
+      "score": 2,
+      "color": "#ffe6cc",
+      "comment": "2 rules — CMSTP Execution - UAC Bypass and Proxy Execution; Sudo Abuse and Sudo Caching Privilege Escalation",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "2"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0002, TA0004, TA0005"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1550",
+      "score": 1,
+      "color": "#ffe6cc",
+      "comment": "1 rule — Pass-the-Hash Detection - NTLM Logon Type 3",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "1"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0008"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1556",
+      "score": 1,
+      "color": "#ffe6cc",
+      "comment": "1 rule — Azure MFA Disabled for User Account",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "1"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0003, TA0005"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1557",
+      "score": 1,
+      "color": "#ffe6cc",
+      "comment": "1 rule — NTLM Hash Capture - Inveigh or Responder Detection",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "1"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0006"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1558",
+      "score": 1,
+      "color": "#ffe6cc",
+      "comment": "1 rule — Kerberoasting Detection - SPN Request Anomalies",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "1"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0006"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1560",
+      "score": 2,
+      "color": "#ffe6cc",
+      "comment": "2 rules — Automated Collection - Archive Utility Abuse; Data Staging via Archive - Linux and macOS",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "2"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0009"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1562",
+      "score": 2,
+      "color": "#ffe6cc",
+      "comment": "2 rules — AWS CloudTrail Disabled or Logging Stopped; AWS EC2 Security Group Wide-Open Ingress",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "Rules",
+          "value": "2"
+        },
+        {
+          "name": "Tactics",
+          "value": "TA0005"
+        }
+      ]
+    }
+  ],
+  "gradient": {
+    "colors": [
+      "#ffffff",
+      "#ffe6cc",
+      "#ff8c66",
+      "#d9381e",
+      "#b30000"
+    ],
+    "minValue": 0,
+    "maxValue": 7
+  },
+  "legendItems": [
+    {
+      "label": "No coverage",
+      "color": "#ffffff"
+    },
+    {
+      "label": "1 rule",
+      "color": "#ffe6cc"
+    },
+    {
+      "label": "2 rules",
+      "color": "#ff8c66"
+    },
+    {
+      "label": "3+ rules",
+      "color": "#d9381e"
+    },
+    {
+      "label": "Dense coverage (5+)",
+      "color": "#b30000"
+    }
+  ],
+  "showTacticRowBackground": true,
+  "tacticRowBackground": "#f5f5f5",
+  "selectTechniquesAcrossTactics": true
+}

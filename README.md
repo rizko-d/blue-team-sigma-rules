@@ -52,6 +52,8 @@ blue-team-sigma-rules/
 │       ├── aws/
 │       ├── azure/
 │       └── gcp/
+├── build/                       # Auto-generated artifacts
+│   └── coverage-layer.json      # ATT&CK Navigator heatmap
 ├── scripts/
 │   ├── check_mitre_coverage.py # Coverage analysis
 │   ├── validate_mitre_tags.py  # Tag validation
@@ -167,10 +169,20 @@ python3 scripts/validate_mitre_tags.py
 # Generate coverage report
 python3 scripts/generate_coverage_report.py > coverage-report.md
 
+# Generate ATT&CK Navigator heatmap
+mkdir -p build && python3 scripts/generate_navigator_layer.py > build/coverage-layer.json
+
 # Compile to Elastic DSL (requires sigmac)
 pip install sigmatools
 sigmac -t elastic --format json rules/execution/unix-shell-execution.yml
 ```
+
+### Viewing the ATT&CK Navigator Heatmap
+
+1. Generate the layer file: `python3 scripts/generate_navigator_layer.py > build/coverage-layer.json`
+2. Open https://mitre-attack.github.io/attack-navigator/
+3. Click **Open Existing Layer** → Upload `build/coverage-layer.json`
+4. The heatmap shows coverage intensity — darker red = more rules per technique
 
 ---
 
@@ -292,7 +304,7 @@ python3 -m pytest tests/test_detection.py::test_rule_against_fixture \
 ### Coverage & Visibility
 - [x] Linux/macOS detection rules (T1059.004, T1543.002, T1548.003, T1003.008, T1070.004, T1543.001, T1560.001)
 - [x] **Cloud detection rules** (AWS CloudTrail, Azure Activity Logs, GCP Audit Logs)
-- [ ] **ATT&CK Navigator Layer JSON export** — visual coverage heatmap
+- [x] **ATT&CK Navigator Layer JSON export** — visual coverage heatmap
 - [ ] **Container / Kubernetes runtime rules** — Falco-style (crypto-mining, container escape, kubectl abuse)
 
 ### Operational Realism
