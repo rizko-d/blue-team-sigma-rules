@@ -1,0 +1,69 @@
+title: Suspicious macOS Shell Execution and AppleScript
+id: a7b8c9d0-e1f2-3456-abcd-567890123456
+status: test
+description: |
+  Detects suspicious shell and scripting execution patterns specific to macOS,
+  including osascript (AppleScript/JXA) abuse for persistence and execution,
+  curl/wget downloads to shell pipeline, and suspicious bash invocations.
+references:
+  - https://attack.mitre.org/techniques/T1059/004/
+  - https://attack.mitre.org/techniques/T1059/007/
+  - https://www.sentinelone.com/blog/macos-malware-osascript/
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.execution
+  - attack.t1059.004
+  - attack.t1059.007
+logsource:
+  category: process_creation
+  product: macos
+detection:
+  selection_osascript_exec:
+    Image|endswith: '/osascript'
+    CommandLine|contains|any:
+      - '-e '
+      - '-l JavaScript'
+      - '-l AppleScript'
+  selection_osascript_network:
+    CommandLine|contains|all:
+      - 'osascript'
+      - 'curl'
+      - 'do shell script'
+  selection_osascript_download:
+    CommandLine|contains|all:
+      - 'osascript'
+      - 'do shell script'
+      - 'curl'
+      - 'bash'
+  selection_curl_pipe_sh:
+    CommandLine|contains|all:
+      - 'curl'
+      - 'sh'
+    CommandLine|contains|any:
+      - 'https://'
+      - 'http://'
+  selection_bash_obfuscated:
+    CommandLine|contains|all:
+      - 'bash'
+      - '-c'
+      - 'echo '
+      - '|'
+      - 'base64'
+    Image|endswith: '/bash'
+  selection_mdm_bypass:
+    CommandLine|contains|all:
+      - 'sudo'
+      - 'spctl'
+      - '--master-disable'
+  selection_gatekeeper_disable:
+    CommandLine|contains|all:
+      - 'spctl'
+      - '--master-disable'
+  condition: 1 of selection_*
+falsepositives:
+  - Legitimate software deployment tooling (Munki, Jamf policies)
+  - Authorized macOS management scripts
+  - Developer tooling and Homebrew operations
+level: high

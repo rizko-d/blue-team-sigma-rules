@@ -1,0 +1,64 @@
+title: Data Staging via Archive - Linux and macOS
+id: b8c9d0e1-f2a3-4567-bcde-678901234567
+status: test
+description: |
+  Detects the creation of archive files (tar, gzip, zip, 7z, rar) for data staging
+  prior to exfiltration on Linux and macOS systems. Attackers compress collected data
+  before exfiltration to reduce size and evade detection (T1560.001).
+references:
+  - https://attack.mitre.org/techniques/T1560/001/
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1560.001/T1560.001.md
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.collection
+  - attack.t1560.001
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  selection_tar:
+    Image|endswith: '/tar'
+    CommandLine|contains|any:
+      - '-czf'
+      - '-cvzf'
+      - '-rvf'
+      - '-zcvf'
+  selection_zip:
+    Image|endswith: '/zip'
+    CommandLine|contains|any:
+      - '-r '
+      - '--exclude'
+  selection_7z:
+    Image|endswith|any:
+      - '/7z'
+      - '/7za'
+    CommandLine|contains: 'a '
+  selection_multi_tar:
+    Image|endswith|any:
+      - '/tar'
+      - '/gzip'
+      - '/bzip2'
+      - '/xz'
+    CommandLine|contains|any:
+      - '/etc'
+      - '/var/log'
+      - '/home/'
+      - '/Users/'
+      - '/root/'
+  selection_zip_multi:
+    Image|endswith: '/zip'
+    CommandLine|contains|any:
+      - '/etc'
+      - '/var/log'
+      - '/home/'
+      - '/Users/'
+      - '/root/'
+  condition: 1 of selection_*
+falsepositives:
+  - System backup automation (rsync, cron jobs)
+  - Log rotation processes
+  - Software build artifacts
+  - Developer operations
+level: medium

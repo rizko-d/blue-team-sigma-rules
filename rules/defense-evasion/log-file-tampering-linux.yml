@@ -1,0 +1,66 @@
+title: Log File Tampering and Deletion - Linux
+id: e5f6a7b8-c9d0-1234-efab-345678901234
+status: test
+description: |
+  Detects attempts to delete or tamper with system log files on Linux, including
+  journalctl flushing, syslog truncation, audit log removal, and history file
+  manipulation. Attackers clear logs post-exploitation to evade detection (T1070.004).
+references:
+  - https://attack.mitre.org/techniques/T1070/004/
+  - https://www.elastic.co/guide/en/security/current/linux-log-clearing.html
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1070.004/T1070.004.md
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.defense-evasion
+  - attack.t1070.004
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  selection_journalctl:
+    CommandLine|contains|all:
+      - 'journalctl'
+      - '--rotate'
+      - '--vacuum-time'
+  selection_journalctl_flush:
+    CommandLine|contains|all:
+      - 'journalctl'
+      - '--flush'
+      - '--rotate'
+  selection_log_delete:
+    CommandLine|contains|all:
+      - 'rm'
+      - '/var/log'
+  selection_log_truncate:
+    CommandLine|contains|all:
+      - '>'
+      - '/var/log'
+      - '.log'
+  selection_syslog_null:
+    CommandLine|contains|all:
+      - '>/dev/null'
+      - '/var/log'
+  selection_history_clean:
+    CommandLine|contains|any:
+      - 'history -c'
+      - 'history -w'
+      - 'shred '
+      - '/bash_history'
+      - '/zsh_history'
+      - 'unset HISTFILE'
+      - 'set +o history'
+      - 'HISTSIZE=0'
+  selection_auth_log_clear:
+    CommandLine|contains|any:
+      - '>/var/log/auth.log'
+      - '>/var/log/secure'
+      - '>/var/log/syslog'
+      - '>/var/log/messages'
+  condition: 1 of selection_*
+falsepositives:
+  - System maintenance scripts (logrotate)
+  - Automated log archival processes
+  - Container log cleanup operations
+level: medium

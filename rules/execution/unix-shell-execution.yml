@@ -1,0 +1,67 @@
+title: Suspicious Unix Shell Execution Patterns
+id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+status: test
+description: |
+  Detects suspicious shell invocation patterns on Unix/Linux systems commonly associated
+  with attacker activity: reverse shell connections, pipe-to-shell execution (curl|sh,
+  wget|bash), base64-encoded commands, and suspicious shell subprocess execution.
+references:
+  - https://attack.mitre.org/techniques/T1059/004/
+  - https://www.sans.org/blog/linux-threat-hunting-syspmon-logs/
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.004/T1059.004.md
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.execution
+  - attack.t1059.004
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  selection_revshell_bash:
+    CommandLine|contains|all:
+      - 'bash'
+      - '/dev/tcp/'
+  selection_revshell_sh:
+    CommandLine|contains|all:
+      - '/bin/sh'
+      - '-i'
+  selection_pipe_curl:
+    CommandLine|contains|all:
+      - 'curl'
+      - 'sh'
+  selection_pipe_wget:
+    CommandLine|contains|all:
+      - 'wget'
+      - 'bash'
+  selection_pipe_wget_sh:
+    CommandLine|contains|all:
+      - 'wget'
+      - 'sh'
+  selection_encoded_bash:
+    CommandLine|contains|all:
+      - 'bash'
+      - '-c'
+      - 'echo '
+      - '|'
+      - 'base64'
+  selection_mkfifo:
+    CommandLine|contains:
+      - 'mkfifo'
+  selection_python_revshell:
+    CommandLine|contains|all:
+      - 'python'
+      - 'connect'
+      - 'socket'
+  selection_nc_revshell:
+    CommandLine|contains|all:
+      - 'nc '
+      - '-e'
+      - '/bin/sh'
+  condition: 1 of selection_*
+falsepositives:
+  - Legitimate administrative scripts using pipe-to-shell patterns
+  - DevOps automation and CI/CD runners
+  - Container build processes
+level: high

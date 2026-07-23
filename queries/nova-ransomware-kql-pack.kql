@@ -1,0 +1,189 @@
+// ============================================================================
+// Nova Ransomware — KQL Query Pack for Microsoft Sentinel / Azure Monitor
+// Author: Rizko Febri Rachmayadi
+// Data Sources: SecurityEvent, DeviceProcessEvents, DeviceFileEvents,
+//               DeviceRegistryEvents, CommonSecurityLog, SigninLogs
+// MITRE ATT&CK: T1486, T1490, T1059.001, T1547.001, T1047
+// ============================================================================
+
+// ===================================================
+// 1. FILE ENCRYPTION — Ekstensi File Nova Ransomware
+//    MITRE: T1486 (Data Encrypted for Impact)
+// ===================================================
+// Mendeteksi file dengan ekstensi khas Nova Ransomware
+DeviceFileEvents
+| where Timestamp > ago(7d)
+| where ActionType in ("FileCreated", "FileRenamed")
+| where FileName matches regex @"\.(nova|NOA|Cry|NOZ|encrypt)$"
+| project Timestamp, DeviceName, FileName, FolderPath, InitiatingProcessFileName,
+          InitiatingProcessCommandLine
+| summarize FileCount = count(), Devices = make_set(DeviceName, 100),
+            Files = make_set(strcat(FileName, "@", FolderPath), 50)
+          by bin(Timestamp, 1h), InitiatingProcessFileName
+| where FileCount > 10
+| sort by FileCount desc
+
+// ===================================================
+// 2. VOLUME SHADOW COPY DELETION — Ransomware Precursor
+//    MITRE: T1490 (Inhibit System Recovery)
+// ===================================================
+// Nova ransomware sering hapus VSS sebelum enkripsi
+let vss_processes = dynamic(["vssadmin.exe", "wmic.exe", "powershell.exe", "diskshadow.exe"]);
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName in (vss_processes)
+| where ProcessCommandLine has_any ("delete", "shadowcopy", "shadow", "DeleteShadowCopies",
+                                     "Win32_ShadowCopy", "resize", "/delete")
+| project Timestamp, DeviceName, FileName, ProcessCommandLine, AccountName, ProcessId
+| extend RansomwareIndicator = iff(FileName == "vssadmin.exe" and
+                                     ProcessCommandLine contains_any ("delete", "resize"),
+                                     "VSS_Deletion", "VSS_Related")
+| sort by Timestamp desc
+
+// ===================================================
+// 3. POWERSHELL .NET DOWNLOAD CRADLE — Infostealer / Payload Staging
+//    MITRE: T1059.001 (PowerShell)
+// ===================================================
+// Nova ransomware delivery via PowerShell payload staging
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName in~ ("powershell.exe", "pwsh.exe")
+| where ProcessCommandLine contains_any (
+        "System.Net.WebClient", "DownloadFile", "DownloadString",
+        "Invoke-WebRequest", "Invoke-RestMethod", "FromBase64String",
+        "System.IO.Compression", "GZipStream", "DeflateStream",
+        "System.Convert"
+    )
+| where ProcessCommandLine matches regex @"https?://"
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine,
+          InitiatingProcessParentFileName, InitiatingProcessAccountName
+| sort by Timestamp desc
+
+// ===================================================
+// 4. RANSOM NOTE DROP — DECRYPT.txt, README.txt, Nova_Help.txt
+//    MITRE: T1486 (Data Encrypted for Impact)
+// ===================================================
+DeviceFileEvents
+| where Timestamp > ago(7d)
+| where ActionType == "FileCreated"
+| where FolderPath endswith @"\Desktop\" or FolderPath endswith @"\Downloads\"
+| where FileName matches regex @"(?i)(DECRYPT|READ_ME|HELP|NOVA_)[A-Za-z]*\.(txt|html|bmp|png)"
+| project Timestamp, DeviceName, FileName, FolderPath, FileSize, InitiatingProcessFileName,
+          InitiatingProcessCommandLine
+| sort by Timestamp desc
+
+// ===================================================
+// 5. SUSPICIOUS SCHEDULED TASK — Persistence Nova
+//    MITRE: T1053.005 (Scheduled Task), T1547.001 (Boot/Logon Autostart)
+// ===================================================
+// Nova membuat scheduled task untuk persistensi setelah reboot
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName =~ "schtasks.exe"
+| where ProcessCommandLine has "/create"
+| where ProcessCommandLine contains_any (
+        @"\Temp\", @"\AppData\", @"\ProgramData\", @"\Public\",
+        "powershell", "cmd /c", "rundll32", "mshta"
+    )
+| extend TaskName = extract(@"/TN\s+""?([^""\s]+)", 1, ProcessCommandLine)
+| project Timestamp, DeviceName, TaskName, ProcessCommandLine, AccountName
+| sort by Timestamp desc
+
+// ===================================================
+// 6. MASS FILE EXTENSION CHANGE — Bulk Rename Detection
+//    MITRE: T1486 (Data Encrypted for Impact)
+// ===================================================
+// Mendeteksi rename massal file dalam waktu singkat (pattern Nova)
+DeviceFileEvents
+| where Timestamp > ago(7d)
+| where ActionType == "FileRenamed"
+| where PreviousFileName !endswith PreviousFileExtension  // file renamed, not just metadata
+| extend NewExtension = extract(@"[.]([^.]+)$", 1, FileName)
+| summarize RenameCount = count() by bin(Timestamp, 5m), DeviceName, NewExtension
+| where RenameCount > 20
+| order by RenameCount desc
+| extend Alert = "MassFileRename"
+| project Alert, Timestamp, DeviceName, NewExtension, RenameCount
+
+// ===================================================
+// 7. REGISTRY RUN KEY — Nova Ransomware Persistence
+//    MITRE: T1547.001 (Registry Run Keys / Startup Folder)
+// ===================================================
+DeviceRegistryEvents
+| where Timestamp > ago(7d)
+| where ActionType == "RegistryValueSet"
+| where RegistryKey contains @"Software\Microsoft\Windows\CurrentVersion\Run"
+| where RegistryValueData contains_any (
+        @"\Temp\", @"\AppData\", @"\ProgramData\",
+        "powershell", "rundll32", "mshta", "vssadmin"
+    )
+| project Timestamp, DeviceName, RegistryKey, RegistryValueName, RegistryValueData,
+          InitiatingProcessFileName
+| sort by Timestamp desc
+
+// ===================================================
+// 8. PROCESS CREATION — Suspicious Child dari Office/PDF
+//    MITRE: T1204.002 (User Execution: Malicious File)
+// ===================================================
+// Nova sering dikirim via phishing macro Office
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where InitiatingProcessFileName in~ ("WINWORD.EXE", "EXCEL.EXE", "POWERPNT.EXE",
+                                        "OUTLOOK.EXE", "ACROBAT.EXE", "AcroRd32.exe")
+| where FileName in~ ("powershell.exe", "cmd.exe", "wscript.exe", "cscript.exe",
+                       "mshta.exe", "rundll32.exe", "regsvr32.exe")
+| project Timestamp, DeviceName, InitiatingProcessFileName, FileName, ProcessCommandLine,
+          AccountName
+| sort by Timestamp desc
+
+// ===================================================
+// 9. C2 NETWORK CONNECTION — Potential Nova C2 Beaconing
+//    MITRE: T1071.001 (Application Layer Protocol: Web)
+// ===================================================
+DeviceNetworkEvents
+| where Timestamp > ago(7d)
+| where RemotePort in (80, 443, 8080, 8443)
+| where InitiatingProcessFileName in~ ("powershell.exe", "rundll32.exe", "regsvr32.exe",
+                                        "mshta.exe", "wscript.exe", "cscript.exe")
+| where RemoteIPType == "Public"
+| summarize ConnectionCount = count(), Destinations = make_set(RemoteIPAddress, 20)
+          by bin(Timestamp, 1h), DeviceName, InitiatingProcessFileName
+| where ConnectionCount > 20
+| order by ConnectionCount desc
+
+// ===================================================
+// 10. RANSOMWARE KILL CHAIN — Multi-Stage Detection
+//     Menggabungkan beberapa indikator di device yang sama dalam 1 jam
+// ===================================================
+let vss = materialize (
+    DeviceProcessEvents
+    | where Timestamp > ago(7d)
+    | where FileName in~ ("vssadmin.exe", "wmic.exe") and
+              ProcessCommandLine contains_any ("delete", "shadowcopy")
+    | project Timestamp, DeviceName, Stage = "VSS_Deletion"
+);
+let file_rename = materialize (
+    DeviceFileEvents
+    | where Timestamp > ago(7d)
+    | where ActionType == "FileRenamed"
+    | extend NewExtension = extract(@"[.]([^.]+)$", 1, FileName)
+    | summarize FileCount = count() by bin(Timestamp, 1h), DeviceName
+    | where FileCount > 50
+    | project Timestamp, DeviceName, Stage = "MassFileRename"
+);
+let ransom_note = materialize (
+    DeviceFileEvents
+    | where Timestamp > ago(7d)
+    | where ActionType == "FileCreated"
+    | where FileName matches regex @"(?i)(DECRYPT|READ_ME|HELP|NOVA_)[A-Za-z]*\.txt"
+    | project Timestamp, DeviceName, Stage = "RansomNote"
+);
+vss
+| union file_rename
+| union ransom_note
+| summarize Stages = make_set(Stage), FirstSeen = min(Timestamp),
+            LastSeen = max(Timestamp)
+          by DeviceName
+| where array_length(Stages) >= 2
+| extend Alert = "Nova_Ransomware_Outbreak"
+| project Alert, DeviceName, Stages, FirstSeen, LastSeen

@@ -1,0 +1,53 @@
+title: Systemd Service Creation for Persistence
+id: b2c3d4e5-f6a7-8901-bcde-f12345678901
+status: test
+description: |
+  Detects the creation or modification of systemd service unit files by non-standard
+  processes. Attackers commonly deploy malicious systemd services to establish persistence
+  on Linux systems (T1543.002).
+references:
+  - https://attack.mitre.org/techniques/T1543/002/
+  - https://www.elastic.co/guide/en/security/current/systemd-service-creation.html
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1543.002/T1543.002.md
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.persistence
+  - attack.t1543.002
+  - attack.privilege-escalation
+logsource:
+  category: file_event
+  product: linux
+detection:
+  selection_service_file:
+    TargetFilename|contains|any:
+      - '/etc/systemd/system/'
+      - '/usr/lib/systemd/system/'
+      - '/lib/systemd/system/'
+      - '/run/systemd/system/'
+    TargetFilename|endswith: '.service'
+  selection_systemctl:
+    Image|endswith: '/systemctl'
+    CommandLine|contains|any:
+      - 'enable'
+      - 'start'
+      - 'daemon-reload'
+  selection_suspicious_exec:
+    CommandLine|contains|any:
+      - '/tmp/'
+      - '/dev/shm/'
+      - 'python'
+      - 'bash -c'
+      - 'curl'
+      - 'wget'
+      - 'nc '
+      - 'perl'
+      - 'm malicious'
+      - 'ExecStart='
+  condition: (selection_service_file or selection_systemctl) and selection_suspicious_exec
+falsepositives:
+  - Legitimate software installation via package managers
+  - System administrator service configuration
+  - Container orchestration tools (Docker, Kubernetes)
+level: high

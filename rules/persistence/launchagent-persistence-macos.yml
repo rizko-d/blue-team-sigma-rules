@@ -1,0 +1,54 @@
+title: Launch Agent and Launch Daemon Persistence - macOS
+id: f6a7b8c9-d0e1-2345-fabc-456789012345
+status: test
+description: |
+  Detects the creation or modification of Launch Agents and Launch Daemons on
+  macOS systems by non-standard processes. Attackers abuse launchd persistence
+  mechanisms via plist files in ~/Library/LaunchAgents and /Library/LaunchDaemons.
+references:
+  - https://attack.mitre.org/techniques/T1543/001/
+  - https://www.sentinelone.com/blog/macos-persistence-launchd/
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1543.001/T1543.001.md
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.persistence
+  - attack.t1543.001
+  - attack.privilege-escalation
+logsource:
+  category: file_event
+  product: macos
+detection:
+  selection_launchagent:
+    TargetFilename|contains|any:
+      - '/Library/LaunchAgents/'
+      - '/Library/LaunchDaemons/'
+      - '~/Library/LaunchAgents/'
+    TargetFilename|endswith: '.plist'
+  selection_launchctl:
+    Image|endswith: '/launchctl'
+    CommandLine|contains|any:
+      - 'load'
+      - 'bootstrap'
+      - 'enable'
+  selection_suspicious_path:
+    CommandLine|contains|any:
+      - '/tmp/'
+      - '~/Library/'
+      - '/Users/Shared/'
+      - '/private/var/tmp/'
+      - '.app'
+  selection_suspicious_label:
+    CommandLine|contains|any:
+      - 'com.apple.'
+      - 'update'
+      - 'updater'
+      - 'system.'
+      - 'com.google.'
+  condition: (selection_launchagent or selection_launchctl) and selection_suspicious_path
+falsepositives:
+  - Legitimate software installation (Adobe, Microsoft Office, etc.)
+  - System updates
+  - Authorized endpoint management tools (Jamf, Kandji)
+level: high
