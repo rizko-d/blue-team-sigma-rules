@@ -5,6 +5,11 @@ description: Detects DCOM lateral movement via MMC20.Application or ShellWindows
 references:
   - https://attack.mitre.org/techniques/T1021.003/
   - https://enigma0x3.net/2017/01/05/lateral-movement-using-the-mmc20-application-com-object/
+
+related:
+  - id: T1021.003
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

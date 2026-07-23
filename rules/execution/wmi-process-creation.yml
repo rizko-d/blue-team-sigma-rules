@@ -7,6 +7,13 @@ description: |
 references:
   - https://attack.mitre.org/techniques/T1047/
   - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1047/T1047.md
+
+related:
+  - id: T1021.004
+    type: mitre-attack
+  - id: T1047
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-02-20
 modified: 2024-06-15

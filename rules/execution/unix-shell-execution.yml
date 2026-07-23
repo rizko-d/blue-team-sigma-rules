@@ -9,6 +9,11 @@ references:
   - https://attack.mitre.org/techniques/T1059/004/
   - https://www.sans.org/blog/linux-threat-hunting-syspmon-logs/
   - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.004/T1059.004.md
+
+related:
+  - id: T1059.004
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-07-23
 modified: 2024-07-23

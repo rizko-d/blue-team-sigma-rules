@@ -9,6 +9,11 @@ references:
   - https://attack.mitre.org/techniques/T1562/008/
   - https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-security-best-practices.html
   - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1562.008/T1562.008.md
+
+related:
+  - id: T1562.008
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-07-23
 modified: 2024-07-23

@@ -9,6 +9,13 @@ references:
   - https://attack.mitre.org/techniques/T1059/004/
   - https://attack.mitre.org/techniques/T1059/007/
   - https://www.sentinelone.com/blog/macos-malware-osascript/
+
+related:
+  - id: T1059.004
+    type: mitre-attack
+  - id: T1059.007
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-07-23
 modified: 2024-07-23

@@ -1,0 +1,26 @@
+{
+  "rule_id": "a1000001-0001-4000-8000-000000000004",
+  "expected": false,
+  "title": "TN - Expected RoleBinding for view access",
+  "description": "Legitimate RoleBinding granting view access to a developer in their namespace",
+  "log": {
+    "EventName": "create",
+    "verb": "create",
+    "objectRef": {
+      "resource": "rolebindings"
+    },
+    "roleRef": {
+      "name": "view"
+    },
+    "user": {
+      "username": "admin",
+      "groups": ["system:serviceaccounts:dev"]
+    },
+    "namespace": "staging",
+    "sourceIPs": ["10.0.0.1"],
+    "responseStatus": {
+      "code": 201
+    },
+    "UtcTime": "2024-07-23 09:15:00.000"
+  }
+}

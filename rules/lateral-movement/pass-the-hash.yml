@@ -4,6 +4,11 @@ status: test
 description: Detects potential Pass-the-Hash attacks via NTLM logon type 3 with admin accounts
 references:
   - https://attack.mitre.org/techniques/T1550.002/
+
+related:
+  - id: T1550.002
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

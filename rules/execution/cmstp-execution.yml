@@ -8,6 +8,13 @@ references:
   - https://attack.mitre.org/techniques/T1218/003/
   - https://github.com/LOLBAS-Project/LOLBAS/blob/master/yml/OSBinaries/Cmstp.yml
   - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1218.003/T1218.003.md
+
+related:
+  - id: T1218.003
+    type: mitre-attack
+  - id: T1548.002
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-03-10
 modified: 2024-06-15

@@ -1,0 +1,27 @@
+{
+  "rule_id": "a1000001-0001-4000-8000-000000000007",
+  "expected": false,
+  "title": "TN - Prometheus node-exporter with emptyDir volume",
+  "description": "Legitimate node-exporter using emptyDir, not hostPath mount",
+  "log": {
+    "EventName": "create",
+    "verb": "create",
+    "objectRef": {
+      "resource": "pods"
+    },
+    "volume": {
+      "hostPath": {
+        "path": "/run/prometheus"
+      }
+    },
+    "user": {
+      "username": "system:serviceaccount:monitoring:prometheus-node-exporter"
+    },
+    "namespace": "monitoring",
+    "sourceIPs": ["10.0.0.1"],
+    "responseStatus": {
+      "code": 201
+    },
+    "UtcTime": "2024-07-23 05:00:00.000"
+  }
+}

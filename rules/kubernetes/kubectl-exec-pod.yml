@@ -1,0 +1,47 @@
+title: Kubectl Exec Into Pod
+id: a1000001-0001-4000-8000-000000000003
+status: test
+description: |
+  Detects remote command execution or shell access into a running pod via
+  kubectl exec or the Kubernetes API. Attackers use pod exec to move laterally
+  within the cluster, access sensitive containers, or execute post-exploitation
+  commands (MITRE T1609 — Container Administration Command).
+references:
+  - https://attack.mitre.org/techniques/T1609/
+  - https://kubernetes.io/docs/tasks/debug/debug-application/get-shell-running-container/
+  - https://www.cyberark.com/resources/threat-research-blog/attacking-kubernetes-clusters-through-pod-exec
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.lateral-movement
+  - attack.t1609
+  - attack.execution
+related:
+  - id: T1609
+    type: mitre-attack
+logsource:
+  category: container
+  product: kubernetes
+detection:
+  selection_exec_api:
+    objectRef.subresource|contains|any:
+      - 'exec'
+      - 'attach'
+    verb|contains|any:
+      - 'create'
+      - 'post'
+  selection_shell_cmd:
+    requestObject.command|contains|any:
+      - '/bin/sh'
+      - '/bin/bash'
+      - '/bin/ash'
+      - '/bin/dash'
+      - 'powershell'
+      - 'cmd.exe'
+  condition: 1 of selection_*
+falsepositives:
+  - Debugging and troubleshooting by cluster administrators
+  - CI/CD pipelines that exec into pods for health checks
+  - Sidecar containers that attach for log shipping
+level: medium

@@ -5,6 +5,11 @@ description: Detects PowerShell execution with encoded commands (base64)
 references:
   - https://attack.mitre.org/techniques/T1059.001/
   - https://blog.f-secure.com/powershell-encoded-commands/
+
+related:
+  - id: T1059.001
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

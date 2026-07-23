@@ -5,6 +5,13 @@ description: Detects use of archive utilities to stage collected data for exfilt
 references:
   - https://attack.mitre.org/techniques/T1119/
   - https://attack.mitre.org/techniques/T1560/
+
+related:
+  - id: T1119
+    type: mitre-attack
+  - id: T1560
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

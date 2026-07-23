@@ -9,6 +9,11 @@ references:
   - https://attack.mitre.org/techniques/T1003/008/
   - https://www.elastic.co/guide/en/security/current/etc-shadow-access.html
   - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1003.008/T1003.008.md
+
+related:
+  - id: T1003.008
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-07-23
 modified: 2024-07-23

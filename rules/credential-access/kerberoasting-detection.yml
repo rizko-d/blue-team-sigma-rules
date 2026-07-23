@@ -5,6 +5,11 @@ description: Detects potential Kerberoasting via anomalous TGS-REQ (Event ID 476
 references:
   - https://attack.mitre.org/techniques/T1558.003/
   - https://posts.specterops.io/kerberoasting-without-t1208-10a5e5e9b5d6
+
+related:
+  - id: T1558.003
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

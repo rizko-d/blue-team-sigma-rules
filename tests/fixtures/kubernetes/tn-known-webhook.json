@@ -1,0 +1,28 @@
+{
+  "rule_id": "a1000001-0001-4000-8000-000000000005",
+  "expected": false,
+  "title": "TN - OPA Gatekeeper admission controller install",
+  "description": "Legitimate OPA Gatekeeper validating webhook installation by cluster admin",
+  "log": {
+    "EventName": "create",
+    "verb": "create",
+    "objectRef": {
+      "resource": "validatingwebhookconfigurations"
+    },
+    "webhook": {
+      "clientConfig": {
+        "url": "https://gatekeeper.opa-system.svc.cluster.local:8443/v1/admit"
+      },
+      "failurePolicy": "Fail"
+    },
+    "user": {
+      "username": "cluster-admin",
+      "groups": ["system:masters"]
+    },
+    "sourceIPs": ["10.0.0.1"],
+    "responseStatus": {
+      "code": 201
+    },
+    "UtcTime": "2024-07-23 07:00:00.000"
+  }
+}

@@ -5,6 +5,11 @@ description: Detects suspicious scheduled task creation for persistence (T1053.0
 references:
   - https://attack.mitre.org/techniques/T1053.005/
   - https://www.elastic.co/guide/en/security/current/scheduled-task-creation.html
+
+related:
+  - id: T1053.005
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

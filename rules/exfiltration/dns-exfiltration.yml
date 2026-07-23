@@ -4,6 +4,11 @@ status: test
 description: Detects potential DNS exfiltration via unusually large TXT record queries
 references:
   - https://attack.mitre.org/techniques/T1048.001/
+
+related:
+  - id: T1048.001
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

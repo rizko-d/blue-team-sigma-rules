@@ -1,0 +1,16 @@
+{
+  "rule_id": "a1000001-0001-4000-8000-000000000001",
+  "expected": true,
+  "title": "TP - Pod with xmrig crypto-mining image deployed",
+  "description": "Attacker deploys pod using xmrig image from Docker Hub for crypto mining",
+  "log": {
+    "EventName": "create",
+    "verb": "create",
+    "objectRef.resource": "pods",
+    "image": "docker.io/xmrig/xmrig:latest",
+    "user.username": "dev-user",
+    "sourceIPs": ["10.0.0.50"],
+    "responseStatus.code": 201,
+    "UtcTime": "2024-07-23 14:22:00.000"
+  }
+}

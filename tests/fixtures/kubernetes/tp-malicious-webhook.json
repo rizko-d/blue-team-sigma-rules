@@ -1,0 +1,28 @@
+{
+  "rule_id": "a1000001-0001-4000-8000-000000000005",
+  "expected": true,
+  "title": "TP - External mutating webhook targeting kube-system",
+  "description": "Attacker registers a mutating webhook pointing to an external URL in kube-system",
+  "log": {
+    "EventName": "create",
+    "verb": "create",
+    "objectRef": {
+      "resource": "mutatingwebhookconfigurations"
+    },
+    "webhook": {
+      "clientConfig": {
+        "url": "https://attacker.example.com/webhook"
+      },
+      "failurePolicy": "Ignore"
+    },
+    "user": {
+      "username": "system:serviceaccount:dev:attacker-sa"
+    },
+    "namespace": "kube-system",
+    "sourceIPs": ["10.244.0.50"],
+    "responseStatus": {
+      "code": 201
+    },
+    "UtcTime": "2024-07-23 18:30:00.000"
+  }
+}

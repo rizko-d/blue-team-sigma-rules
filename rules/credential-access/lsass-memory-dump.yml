@@ -5,6 +5,11 @@ description: Detects LSASS memory dump using comsvcs.dll MiniDump or rundll32.ex
 references:
   - https://attack.mitre.org/techniques/T1003.001/
   - https://github.com/gtworek/PSBits/blob/master/Misc/ComsvcsDLL.md
+
+related:
+  - id: T1003.001
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

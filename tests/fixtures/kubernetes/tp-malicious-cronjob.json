@@ -1,0 +1,24 @@
+{
+  "rule_id": "a1000001-0001-4000-8000-000000000008",
+  "expected": true,
+  "title": "TP - CronJob from public image with aggressive schedule",
+  "description": "Attacker creates a CronJob from docker.io image with * * * * * schedule for persistence",
+  "log": {
+    "EventName": "create",
+    "verb": "create",
+    "objectRef": {
+      "resource": "cronjobs"
+    },
+    "image": "docker.io/attacker/backconnect:latest",
+    "schedule": "* * * * *",
+    "user": {
+      "username": "dev-user"
+    },
+    "namespace": "default",
+    "sourceIPs": ["10.244.0.45"],
+    "responseStatus": {
+      "code": 201
+    },
+    "UtcTime": "2024-07-23 21:00:00.000"
+  }
+}

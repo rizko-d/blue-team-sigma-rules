@@ -9,6 +9,11 @@ references:
   - https://attack.mitre.org/techniques/T1070/004/
   - https://www.elastic.co/guide/en/security/current/linux-log-clearing.html
   - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1070.004/T1070.004.md
+
+related:
+  - id: T1070.004
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-07-23
 modified: 2024-07-23

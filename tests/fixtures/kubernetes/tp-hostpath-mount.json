@@ -1,0 +1,27 @@
+{
+  "rule_id": "a1000001-0001-4000-8000-000000000007",
+  "expected": true,
+  "title": "TP - Pod mounting Docker socket for escape",
+  "description": "Attacker deploys pod with /var/run/docker.sock hostPath mount for container escape",
+  "log": {
+    "EventName": "create",
+    "verb": "create",
+    "objectRef": {
+      "resource": "pods"
+    },
+    "volume": {
+      "hostPath": {
+        "path": "/var/run/docker.sock"
+      }
+    },
+    "user": {
+      "username": "malicious-user"
+    },
+    "namespace": "default",
+    "sourceIPs": ["10.244.0.30"],
+    "responseStatus": {
+      "code": 201
+    },
+    "UtcTime": "2024-07-23 20:00:00.000"
+  }
+}

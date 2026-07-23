@@ -1,0 +1,47 @@
+title: Malicious Admission Webhook Registration
+id: a1000001-0001-4000-8000-000000000005
+status: test
+description: |
+  Detects creation of new MutatingWebhookConfiguration or
+  ValidatingWebhookConfiguration resources pointing to external or unexpected
+  endpoints. Attackers deploy malicious webhooks to intercept API requests,
+  inject sidecars, disable security controls, or maintain persistent access.
+references:
+  - https://attack.mitre.org/techniques/T1543/001/
+  - https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/
+  - https://www.inguardians.com/posts/20210803-webhook-injection-kubernetes/
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.persistence
+  - attack.t1543.001
+  - attack.defense-evasion
+related:
+  - id: T1543.001
+    type: mitre-attack
+logsource:
+  category: container
+  product: kubernetes
+detection:
+  selection_webhook_create:
+    verb|contains|any:
+      - 'create'
+      - 'patch'
+      - 'update'
+  selection_webhook_resource:
+    objectRef.resource|contains|any:
+      - 'mutatingwebhookconfigurations'
+      - 'validatingwebhookconfigurations'
+  selection_suspicious_http:
+    webhook.clientConfig.url|contains:
+      - 'http://'
+  selection_suspicious_failure:
+    webhook.failurePolicy:
+      - 'Ignore'
+  condition: selection_webhook_create and selection_webhook_resource and 1 of selection_suspicious_*
+falsepositives:
+  - Legitimate OPA/Gatekeeper admission controller installation
+  - Service mesh sidecar injection webhooks (Istio, Linkerd)
+  - Custom admission controllers deployed by platform teams
+level: high

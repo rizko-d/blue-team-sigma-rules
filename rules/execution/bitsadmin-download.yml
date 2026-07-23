@@ -5,6 +5,13 @@ description: Detects bitsadmin.exe being used to download files
 references:
   - https://attack.mitre.org/techniques/T1197/
   - https://lolbas-project.github.io/lolbas/Binaries/Bitsadmin/
+
+related:
+  - id: T1105
+    type: mitre-attack
+  - id: T1197
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

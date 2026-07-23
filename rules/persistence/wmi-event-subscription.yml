@@ -4,6 +4,11 @@ status: test
 description: Detects WMI persistence via __EventFilter and __EventConsumer creation
 references:
   - https://attack.mitre.org/techniques/T1546.003/
+
+related:
+  - id: T1546.003
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

@@ -4,6 +4,11 @@ status: test
 description: Detects extraction of NTDS.dit via VSSAdmin shadow copy or similar tools
 references:
   - https://attack.mitre.org/techniques/T1003.003/
+
+related:
+  - id: T1003.003
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

@@ -1,0 +1,42 @@
+title: Privileged Container Creation
+id: a1000001-0001-4000-8000-000000000002
+status: test
+description: |
+  Detects creation of containers with elevated security context in Kubernetes,
+  including privileged mode, host PID/IPC sharing, or host network access.
+  Attackers use privileged containers to escape to the host node
+  (MITRE T1611 — Escape to Host).
+references:
+  - https://attack.mitre.org/techniques/T1611/
+  - https://kubernetes.io/docs/concepts/security/pod-security-standards/
+  - https://www.trendmicro.com/vinfo/us/security/news/cybercrime-and-digital-threats/container-escape-techniques
+
+related:
+  - id: T1611
+    type: mitre-attack
+
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.privilege-escalation
+  - attack.t1611
+  - attack.defense-evasion
+logsource:
+  category: container
+  product: kubernetes
+detection:
+  selection_privileged:
+    securityContext.privileged: true
+  selection_hostpid:
+    hostPID: true
+  selection_hostipc:
+    hostIPC: true
+  selection_hostnetwork:
+    hostNetwork: true
+  condition: 1 of selection_*
+falsepositives:
+  - System daemonsets that require host network access (CNI plugins, node-exporter)
+  - Monitoring agents with legitimate host access requirements
+  - Cluster-level infrastructure components in kube-system namespace
+level: high

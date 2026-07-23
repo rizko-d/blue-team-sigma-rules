@@ -5,6 +5,11 @@ description: Detects suspicious mshta.exe execution with remote content or scrip
 references:
   - https://attack.mitre.org/techniques/T1218.005/
   - https://lolbas-project.github.io/lolbas/Binaries/Mshta/
+
+related:
+  - id: T1218.005
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

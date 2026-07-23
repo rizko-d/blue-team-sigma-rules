@@ -44,6 +44,7 @@ def main():
         'attack.credential-access', 'attack.discovery',
         'attack.lateral-movement', 'attack.collection',
         'attack.command-and-control', 'attack.exfiltration', 'attack.impact',
+        'attack.resource-development',
     ]) - set(tactics.keys())
     
     if missing:

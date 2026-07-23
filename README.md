@@ -2,8 +2,8 @@
 
 > **Author:** Rizko Febri Rachmayadi  
 > **Status:** Active Development  
-> **44 Sigma Rules** | **12/12 MITRE ATT&CK Tactic Coverage** | **55 Unique Techniques**  
-> **Cross-platform: Windows, Linux, macOS, AWS, Azure, GCP**
+> **63 Sigma Rules** | **13/12 MITRE ATT&CK Tactic Coverage** | **56+ Unique Techniques**  
+> **Cross-platform: Windows, Linux, macOS, AWS, Azure, GCP, Kubernetes**
 
 ---
 
@@ -24,19 +24,23 @@ A self-contained detection engineering portfolio demonstrating:
 blue-team-sigma-rules/
 ├── .github/workflows/
 │   └── sigma-test.yml          # GitHub Actions CI pipeline
-├── rules/                      # 55 Sigma detection rules
+├── rules/                      # 63 Sigma detection rules
 │   ├── initial-access/         # 4 rules (T1204, T1547)
 │   ├── execution/              # 10 rules (T1059.001, T1059.004, T1047, T1218, T1105, T1197)
 │   ├── persistence/            # 10 rules (T1053, T1543, T1546, T1547, T1098, T1078, T1098.002)
 │   │   ├── (+ AWS IAM, Azure Guest Role, Azure Admin Consent, GCP IAM)
-│   ├── privilege-escalation/   # 4 rules (T1068, T1548, T1053)
+│   ├── privilege-escalation/   # 5 rules (T1068, T1548, T1053, T1611)
 │   ├── defense-evasion/        # 15 rules (T1218, T1027, T1197, T1070, T1562, T1556)
 │   │   ├── (+ AWS CloudTrail, AWS SG Open, Azure MFA Disabled)
-│   ├── credential-access/      # 7 rules (T1003, T1557, T1558, T1078)
-│   │   ├── (+ GCP Service Account Key)
+│   ├── credential-access/      # 8 rules (T1003, T1557, T1558, T1078, T1552)
+│   │   ├── (+ GCP Service Account Key, K8s Secret Enum)
 │   ├── discovery/              # 4 rules (T1087, T1057, T1530)
 │   │   ├── (+ AWS S3 Public, GCP Bucket Public)
 │   ├── lateral-movement/       # 4 rules (T1047, T1021, T1550)
+│   ├── kubernetes/             # 8 rules (NEW — K8s runtime detection)
+│   │   ├── crypto-mining-pod, privileged-container, kubectl-exec-pod,
+│   │   ├── cluster-admin-binding, malicious-admission-webhook,
+│   │   ├── secret-bulk-enumeration, hostpath-volume-mount, malicious-cronjob
 │   ├── collection/             # 2 rules (T1119, T1560)
 │   ├── command-and-control/    # 2 rules (T1071, T1055)
 │   ├── exfiltration/           # 3 rules (T1048)
@@ -98,6 +102,23 @@ blue-team-sigma-rules/
 
 ### Cross-Platform Coverage (18 new rules)
 
+### Kubernetes Runtime Detection (8 rules — NEW)
+
+K8s API server audit log detection rules for container runtime threats:
+
+| Rule | MITRE | Description |
+|------|-------|-------------|
+| **Crypto-mining Pod** | T1204.002 | Mining images (xmrig, lolminer, nbminer) + stratum pool connections |
+| **Privileged Container** | T1611 | Pod with `privileged`, `hostPID`, or `hostNetwork` for escape |
+| **Kubectl Exec Into Pod** | T1609 | API audit `pods/exec` with shell commands |
+| **Cluster-Admin Binding** | T1098 | ClusterRoleBinding granting cluster-admin / system:masters |
+| **Malicious Webhook** | T1543.001 | External webhook registration (HTTP, failure Ignore) |
+| **Secret Bulk Enumeration** | T1552.007 | Bulk get/list on secrets across namespaces |
+| **HostPath Volume Mount** | T1611 | Docker socket, host filesystem, /proc, device mounts |
+| **Suspicious CronJob** | T1053.007 | Public images, aggressive schedules, non-standard namespaces |
+
+### Cross-Platform Coverage (18 rules)
+
 | Rule | Platform | Technique | Description |
 |------|----------|-----------|-------------|
 | **Unix Shell Execution** | Linux | T1059.004 | Reverse shell, pipe-to-shell, encoded commands |
@@ -139,12 +160,13 @@ The most heavily covered tactic. Rules detect:
 
 The GitHub Actions workflow (`sigma-test.yml`) runs on every push/PR:
 
-1. **Syntax Validation** — Validates YAML for all 44 rules
+1. **Syntax Validation** — Validates YAML for all 63 rules
 2. **Schema Validation** — Checks required fields, UUID format, severity levels
 3. **Sigmac Compilation** — Compiles rules to Elastic DSL JSON
-4. **Unit Tests** — 317 parametrized tests (7 assertion classes per rule)
-5. **MITRE Coverage Check** — Ensures all 12 tactics covered
-6. **Artifact Publishing** — Compiled rules + coverage report available for download
+4. **Unit Tests** — 443 parametrized tests (7 assertion classes per rule)
+5. **MITRE Coverage Check** — Ensures all 13 tactics covered
+6. **Atomic Link Validation** — Validates all rules have MITRE `related` field
+7. **Artifact Publishing** — Compiled rules + coverage report + atomic matrix available for download
 
 ---
 
@@ -296,6 +318,13 @@ python3 -m pytest tests/test_detection.py::test_rule_against_fixture \
 ---
 
 ## Future Roadmap
+
+### ✅ Just Delivered (this update)
+- [x] **Kubernetes Runtime Detection** — 8 Sigma rules for K8s audit logs: crypto-mining, privileged container, kubectl exec, RBAC abuse, malicious webhook, secret enumeration, hostpath mount, cronjob persistence
+- [x] **Emulation Mapping** — `related` field with MITRE ATT&CK technique IDs added to all 63 rules for purple-team validation
+- [x] **CI Validation** — `scripts/validate_atomic_links.py` automates `related` field enforcement
+- [x] **Atomic Red Team Coverage Matrix** — `build/atomic-matrix.md` auto-generated technique-to-rule mapping
+- [x] **TP/TN Detection Fixtures** — 16 K8s fixture files validating detection logic against real log scenarios
 
 ### Detection Engineering Maturity
 - [x] **Detection-as-Code test harness** — validate each rule against true-positive / true-negative log fixtures (not just syntax), using sigma-cli + backend converters

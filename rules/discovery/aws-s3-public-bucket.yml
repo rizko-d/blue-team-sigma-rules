@@ -9,6 +9,11 @@ references:
   - https://attack.mitre.org/techniques/T1530/
   - https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-logging.html
   - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1530/T1530.md
+
+related:
+  - id: T1530
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-07-23
 modified: 2024-07-23

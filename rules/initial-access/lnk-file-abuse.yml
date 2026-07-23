@@ -5,6 +5,13 @@ description: Detects suspicious LNK file execution via command line or Explorer
 references:
   - https://attack.mitre.org/techniques/T1547.009/
   - https://posts.specterops.io/shortcut-deception-64e14a45f8c
+
+related:
+  - id: T1204.002
+    type: mitre-attack
+  - id: T1547.009
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

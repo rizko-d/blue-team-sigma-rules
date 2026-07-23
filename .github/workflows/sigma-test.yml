@@ -6,12 +6,14 @@ on:
     paths:
       - 'rules/**'
       - 'tests/**'
+      - 'scripts/**'
       - '.github/workflows/sigma-test.yml'
   pull_request:
     branches: [ main ]
     paths:
       - 'rules/**'
       - 'tests/**'
+      - 'scripts/**'
 
 jobs:
   test:
@@ -93,6 +95,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - name: Validate ATT&CK tags
         run: |
+          pip install pyyaml
           python scripts/validate_mitre_tags.py
+
+  validate-atomic:
+    name: Validate Atomic Links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate Atomic Red Team references
+        run: |
+          pip install pyyaml
+          python scripts/validate_atomic_links.py

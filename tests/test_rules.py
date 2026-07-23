@@ -70,7 +70,7 @@ class TestRuleSyntax:
     
     @pytest.mark.parametrize('rule_path', ALL_RULES)
     def test_logsource_valid(self, rule_path):
-        valid_products = {'windows', 'linux', 'macos', 'office365', 'azure', 'aws', 'gcp'}
+        valid_products = {'windows', 'linux', 'macos', 'office365', 'azure', 'aws', 'gcp', 'kubernetes'}
         with open(rule_path) as f:
             rule = yaml.safe_load(f)
         product = rule['logsource'].get('product', '')

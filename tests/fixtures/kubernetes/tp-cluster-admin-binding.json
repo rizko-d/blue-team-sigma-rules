@@ -1,0 +1,25 @@
+{
+  "rule_id": "a1000001-0001-4000-8000-000000000004",
+  "expected": true,
+  "title": "TP - Unauthorized cluster-admin binding created",
+  "description": "Attacker creates a ClusterRoleBinding granting cluster-admin to a service account",
+  "log": {
+    "EventName": "create",
+    "verb": "create",
+    "objectRef": {
+      "resource": "clusterrolebindings"
+    },
+    "roleRef": {
+      "name": "cluster-admin"
+    },
+    "user": {
+      "username": "compromised-bot",
+      "groups": ["system:serviceaccounts:dev"]
+    },
+    "sourceIPs": ["203.0.113.45"],
+    "responseStatus": {
+      "code": 201
+    },
+    "UtcTime": "2024-07-23 17:00:00.000"
+  }
+}

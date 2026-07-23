@@ -1,0 +1,65 @@
+title: Suspicious HostPath Volume Mount
+id: a1000001-0001-4000-8000-000000000007
+status: test
+description: |
+  Detects pods mounting sensitive host paths such as the Docker socket,
+  host filesystem root, device nodes, or /proc. Attackers use hostPath
+  volumes to escape containers, access the host filesystem, execute
+  privileged operations, or maintain persistence across pod restarts.
+references:
+  - https://attack.mitre.org/techniques/T1611/
+  - https://kubernetes.io/docs/concepts/storage/volumes/#hostpath
+  - https://www.trendmicro.com/vinfo/us/security/news/cybercrime-and-digital-threats/container-escape-using-hostpath-volume
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.privilege-escalation
+  - attack.t1611
+  - attack.persistence
+  - attack.defense-evasion
+related:
+  - id: T1611
+    type: mitre-attack
+logsource:
+  category: container
+  product: kubernetes
+detection:
+  selection_docker_socket:
+    volume.hostPath.path|contains|any:
+      - '/var/run/docker.sock'
+      - '/run/docker.sock'
+      - '/var/run/crio/crio.sock'
+      - '/run/crio/crio.sock'
+      - '/var/run/containerd/containerd.sock'
+      - '/run/containerd/containerd.sock'
+  selection_host_root:
+    volume.hostPath.path|contains|any:
+      - '/etc/kubernetes'
+      - '/var/lib/kubelet'
+      - '/var/lib/etcd'
+      - '/etc/kubernetes/pki'
+  selection_host_devices:
+    volume.hostPath.path|contains|any:
+      - '/dev/kmsg'
+      - '/dev/sda'
+      - '/dev/mem'
+      - '/dev/kmem'
+      - '/dev/null'
+      - '/proc'
+      - '/sys'
+  selection_sensitive_files:
+    volume.hostPath.path|contains|any:
+      - '/etc/shadow'
+      - '/etc/passwd'
+      - '/etc/kubernetes/pki'
+      - '/var/log'
+      - '/var/lib/docker'
+      - '/var/lib/containerd'
+  condition: 1 of selection_*
+falsepositives:
+  - Monitoring daemonsets (Fluentd, Filebeat, Prometheus node-exporter)
+  - Log collection agents that require /var/log access
+  - Node maintenance pods with legitimate host access requirements
+  - Kubernetes CSI driver plugins needing device access
+level: high

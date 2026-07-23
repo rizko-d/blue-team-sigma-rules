@@ -9,6 +9,11 @@ references:
   - https://attack.mitre.org/techniques/T1556/006/
   - https://learn.microsoft.com/en-us/azure/active-directory/authentication/howto-mfa-userstates
   - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1556.006/T1556.006.md
+
+related:
+  - id: T1556.006
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-07-23
 modified: 2024-07-23

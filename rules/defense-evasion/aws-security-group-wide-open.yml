@@ -9,6 +9,11 @@ references:
   - https://attack.mitre.org/techniques/T1562/007/
   - https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html
   - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1562.007/T1562.007.md
+
+related:
+  - id: T1562.007
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-07-23
 modified: 2024-07-23

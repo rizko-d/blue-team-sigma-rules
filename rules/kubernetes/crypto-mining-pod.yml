@@ -1,0 +1,68 @@
+title: Crypto-mining Pod Detection
+id: a1000001-0001-4000-8000-000000000001
+status: test
+description: |
+  Detects container images or running processes associated with cryptocurrency
+  mining activity in Kubernetes clusters. Monitors pod creation events with
+  known mining images (xmrig, lolminer, nbminer, etc.) and suspicious
+  resource configurations indicating mining abuse.
+references:
+  - https://attack.mitre.org/techniques/T1204/002/
+  - https://www.microsoft.com/security/blog/2023/05/15/kubernetes-cryptomining-campaigns/
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1204.002/T1204.002.md
+
+related:
+  - id: T1204.002
+    type: mitre-attack
+
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.execution
+  - attack.t1204.002
+  - attack.resource-development
+logsource:
+  category: container
+  product: kubernetes
+detection:
+  selection_miner_image:
+    image|contains|any:
+      - 'xmrig'
+      - 'lolminer'
+      - 'nbminer'
+      - 'ccminer'
+      - 'sgminer'
+      - 'bfgminer'
+      - 'cpuminer'
+      - 'minerd'
+      - 'ethminer'
+      - 't-rex'
+      - 'gminer'
+      - 'teamredminer'
+      - 'phoenixminer'
+      - 'wildrig'
+  selection_miner_process:
+    EventName|contains:
+      - 'create'
+    container.process|contains|any:
+      - 'xmrig'
+      - 'lolminer'
+      - 'nbminer'
+      - 'minerd'
+      - 'ccminer'
+      - 'stratum'
+  selection_mining_pool:
+    command|contains|any:
+      - 'stratum+tcp://'
+      - 'stratum+ssl://'
+      - 'pool.mine'
+      - 'mine.crypto'
+      - 'pool.supportxmr'
+      - 'pool.monero'
+  condition: 1 of selection_*
+falsepositives:
+  - Legitimate blockchain node operations on approved infrastructure
+  - Authorized cryptocurrency research in isolated namespaces
+  - GPU computing workloads (AI/ML training) using similar GPU patterns
+level: high

@@ -5,6 +5,11 @@ description: Detects PowerShell download cradles commonly used for staging
 references:
   - https://attack.mitre.org/techniques/T1059.001/
   - https://gist.github.com/HarmJ0y/bb48307ffa663256e239
+
+related:
+  - id: T1059.001
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

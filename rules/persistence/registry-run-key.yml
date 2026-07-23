@@ -4,6 +4,11 @@ status: test
 description: Detects modification of registry Run/RunOnce keys with suspicious file paths
 references:
   - https://attack.mitre.org/techniques/T1547.001/
+
+related:
+  - id: T1547.001
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

@@ -1,0 +1,24 @@
+{
+  "rule_id": "a1000001-0001-4000-8000-000000000008",
+  "expected": false,
+  "title": "TN - Scheduled database backup CronJob",
+  "description": "Legitimate daily backup CronJob using internal registry image",
+  "log": {
+    "EventName": "create",
+    "verb": "create",
+    "objectRef": {
+      "resource": "cronjobs"
+    },
+    "image": "gcr.io/company-prod/backup-tool:v2.1",
+    "schedule": "0 2 * * *",
+    "user": {
+      "username": "platform-bot"
+    },
+    "namespace": "production",
+    "sourceIPs": ["10.0.0.15"],
+    "responseStatus": {
+      "code": 201
+    },
+    "UtcTime": "2024-07-23 04:00:00.000"
+  }
+}

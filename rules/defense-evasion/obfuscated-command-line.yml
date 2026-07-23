@@ -6,6 +6,11 @@ description: |
   reverse strings, environment variable expansion.
 references:
   - https://attack.mitre.org/techniques/T1027/
+
+related:
+  - id: T1027
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

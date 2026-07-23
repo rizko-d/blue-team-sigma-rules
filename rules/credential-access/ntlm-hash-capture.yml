@@ -5,6 +5,11 @@ description: Detects use of Inveigh or similar tools for NTLM hash capture
 references:
   - https://attack.mitre.org/techniques/T1557.001/
   - https://github.com/Kevin-Robertson/Inveigh
+
+related:
+  - id: T1557.001
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

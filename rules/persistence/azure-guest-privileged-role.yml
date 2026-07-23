@@ -9,6 +9,11 @@ description: |
 references:
   - https://attack.mitre.org/techniques/T1078/004/
   - https://learn.microsoft.com/en-us/azure/active-directory/fundamentals/security-operations-privileged-identity-management
+
+related:
+  - id: T1078.004
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-07-23
 modified: 2024-07-23

@@ -1,0 +1,28 @@
+{
+  "rule_id": "a1000001-0001-4000-8000-000000000002",
+  "expected": false,
+  "title": "TN - Standard unprivileged app pod",
+  "description": "Regular app deployment without any privileged attributes",
+  "log": {
+    "EventName": "create",
+    "verb": "create",
+    "objectRef": {
+      "resource": "pods"
+    },
+    "securityContext": {
+      "privileged": false
+    },
+    "hostPID": false,
+    "hostIPC": false,
+    "hostNetwork": false,
+    "user": {
+      "username": "developer"
+    },
+    "namespace": "staging",
+    "sourceIPs": ["10.0.1.50"],
+    "responseStatus": {
+      "code": 201
+    },
+    "UtcTime": "2024-07-23 08:00:00.000"
+  }
+}

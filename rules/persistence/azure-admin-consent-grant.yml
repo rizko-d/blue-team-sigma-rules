@@ -9,6 +9,11 @@ references:
   - https://attack.mitre.org/techniques/T1098/002/
   - https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/grant-admin-consent
   - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1098.002/T1098.002.md
+
+related:
+  - id: T1098.002
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-07-23
 modified: 2024-07-23

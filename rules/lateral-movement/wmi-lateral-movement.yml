@@ -5,6 +5,13 @@ description: Detects lateral movement using wmic.exe process call create
 references:
   - https://attack.mitre.org/techniques/T1047/
   - https://attack.mitre.org/techniques/T1546.014/
+
+related:
+  - id: T1047
+    type: mitre-attack
+  - id: T1546.014
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

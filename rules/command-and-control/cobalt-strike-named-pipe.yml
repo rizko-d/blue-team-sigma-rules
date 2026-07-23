@@ -5,6 +5,11 @@ description: Detects default Cobalt Strike named pipe patterns (MSSE-, postex, s
 references:
   - https://attack.mitre.org/techniques/T1055/
   - https://www.cobaltstrike.com/blog/learn-pipe-fitting-for-all-of-your-offense-projects/
+
+related:
+  - id: T1055
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

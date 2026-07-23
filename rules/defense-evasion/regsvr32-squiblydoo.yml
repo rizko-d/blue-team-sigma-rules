@@ -5,6 +5,11 @@ description: Detects regsvr32.exe executing remote scriptlets (Squiblydoo) or su
 references:
   - https://attack.mitre.org/techniques/T1218.010/
   - https://lolbas-project.github.io/lolbas/Binaries/Regsvr32/
+
+related:
+  - id: T1218.010
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

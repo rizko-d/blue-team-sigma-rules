@@ -8,6 +8,13 @@ references:
   - https://attack.mitre.org/techniques/T1059/001/
   - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.001/T1059.001.md
   - https://blog.palantir.com/taming-powershell-3-1b0e5b8b5a8
+
+related:
+  - id: T1027
+    type: mitre-attack
+  - id: T1059.001
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 modified: 2024-06-15

@@ -5,6 +5,13 @@ description: Detects potential DNS tunneling by identifying high entropy subdoma
 references:
   - https://attack.mitre.org/techniques/T1071.004/
   - https://blog.cloudflare.com/detecting-dns-tunneling/
+
+related:
+  - id: T1048
+    type: mitre-attack
+  - id: T1071.004
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

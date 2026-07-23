@@ -5,6 +5,11 @@ description: Detects suspicious Active Directory enumeration using PowerShell cm
 references:
   - https://attack.mitre.org/techniques/T1087.002/
   - https://github.com/PowerShellMafia/PowerSploit
+
+related:
+  - id: T1087.002
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-01-15
 tags:

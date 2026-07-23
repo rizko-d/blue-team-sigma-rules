@@ -1,0 +1,27 @@
+{
+  "rule_id": "a1000001-0001-4000-8000-000000000002",
+  "expected": true,
+  "title": "TP - Container created with privileged=true",
+  "description": "Attacker deploys container in privileged mode for host escape",
+  "log": {
+    "EventName": "create",
+    "verb": "create",
+    "objectRef": {
+      "resource": "pods"
+    },
+    "securityContext": {
+      "privileged": true
+    },
+    "hostPID": false,
+    "hostNetwork": false,
+    "user": {
+      "username": "attacker-svc"
+    },
+    "namespace": "default",
+    "sourceIPs": ["10.244.0.15"],
+    "responseStatus": {
+      "code": 201
+    },
+    "UtcTime": "2024-07-23 15:30:00.000"
+  }
+}

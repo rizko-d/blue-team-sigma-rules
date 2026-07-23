@@ -1,0 +1,55 @@
+title: Suspicious Kubernetes CronJob Creation
+id: a1000001-0001-4000-8000-000000000008
+status: test
+description: |
+  Detects creation of CronJob resources that execute from untrusted container
+  images, run on suspicious schedules, or target sensitive namespaces.
+  Attackers use CronJobs for persistence, scheduled backdoor execution, or
+  recurring data exfiltration in Kubernetes environments.
+references:
+  - https://attack.mitre.org/techniques/T1053/007/
+  - https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/
+  - https://www.elastic.co/security-labs/kubernetes-cronjob-abuse
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.persistence
+  - attack.t1053.007
+  - attack.execution
+related:
+  - id: T1053.007
+    type: mitre-attack
+logsource:
+  category: container
+  product: kubernetes
+detection:
+  selection_cronjob_create:
+    verb|contains|any:
+      - 'create'
+      - 'patch'
+      - 'update'
+  selection_resource:
+    objectRef.resource|contains:
+      - 'cronjobs'
+  selection_suspicious_public:
+    image|contains|any:
+      - 'docker.io/'
+      - 'index.docker.io/'
+      - 'quay.io/'
+      - 'ghcr.io/'
+  selection_suspicious_schedule:
+    schedule|contains|any:
+      - '* * * * *'
+      - '*/1 *'
+      - '*/5 *'
+      - '*/10 * * * *'
+      - '*/15 * * * *'
+      - '@every'
+  condition: selection_cronjob_create and selection_resource and 1 of selection_suspicious_*
+falsepositives:
+  - Scheduled backup CronJobs using public container registries
+  - Data pipeline CronJobs (ETL jobs, database maintenance)
+  - Monitoring and cleanup CronJobs with aggressive schedules
+  - GitOps deployments reconciling CronJob definitions
+level: medium

@@ -1,0 +1,26 @@
+{
+  "rule_id": "a1000001-0001-4000-8000-000000000003",
+  "expected": true,
+  "title": "TP - kubectl exec with /bin/sh into pod",
+  "description": "Attacker uses kubectl exec to get shell access in a running pod",
+  "log": {
+    "EventName": "exec",
+    "verb": "create",
+    "objectRef": {
+      "resource": "pods",
+      "subresource": "exec"
+    },
+    "requestObject": {
+      "command": ["/bin/sh", "-c", "apt-get update && apt-get install -y curl"]
+    },
+    "user": {
+      "username": "compromised-user"
+    },
+    "namespace": "production",
+    "sourceIPs": ["192.168.1.50"],
+    "responseStatus": {
+      "code": 101
+    },
+    "UtcTime": "2024-07-23 16:45:00.000"
+  }
+}

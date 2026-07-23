@@ -13,7 +13,7 @@ KNOWN_TACTICS = {
     'attack.privilege-escalation', 'attack.defense-evasion',
     'attack.credential-access', 'attack.discovery', 'attack.lateral-movement',
     'attack.collection', 'attack.command-and-control', 'attack.exfiltration',
-    'attack.impact',
+    'attack.impact', 'attack.resource-development',
 }
 
 def main():

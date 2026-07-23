@@ -1,0 +1,26 @@
+{
+  "rule_id": "a1000001-0001-4000-8000-000000000003",
+  "expected": false,
+  "title": "TN - kubectl port-forward (not exec)",
+  "description": "Legitimate kubectl port-forward for debugging, not command execution",
+  "log": {
+    "EventName": "exec",
+    "verb": "create",
+    "objectRef": {
+      "resource": "pods",
+      "subresource": "portforward"
+    },
+    "requestObject": {
+      "command": []
+    },
+    "user": {
+      "username": "developer1"
+    },
+    "namespace": "staging",
+    "sourceIPs": ["10.0.0.25"],
+    "responseStatus": {
+      "code": 101
+    },
+    "UtcTime": "2024-07-23 11:30:00.000"
+  }
+}

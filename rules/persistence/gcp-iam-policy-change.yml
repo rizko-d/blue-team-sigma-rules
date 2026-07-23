@@ -9,6 +9,11 @@ references:
   - https://attack.mitre.org/techniques/T1098/
   - https://cloud.google.com/iam/docs/understanding-roles
   - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1098/T1098.md
+
+related:
+  - id: T1098
+    type: mitre-attack
+
 author: Rizko Febri Rachmayadi
 date: 2024-07-23
 modified: 2024-07-23

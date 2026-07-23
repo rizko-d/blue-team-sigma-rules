@@ -1,0 +1,50 @@
+title: Cluster-Admin Role Binding Created
+id: a1000001-0001-4000-8000-000000000004
+status: test
+description: |
+  Detects creation of new ClusterRoleBindings granting cluster-admin or other
+  highly privileged roles. Attackers create privileged bindings to escalate
+  privileges, maintain persistence, or backdoor cluster access.
+references:
+  - https://attack.mitre.org/techniques/T1098/
+  - https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+  - https://www.microsoft.com/security/blog/2020/04/02/attack-matrix-kubernetes/
+author: Rizko Febri Rachmayadi
+date: 2024-07-23
+modified: 2024-07-23
+tags:
+  - attack.privilege-escalation
+  - attack.t1098
+  - attack.persistence
+related:
+  - id: T1098
+    type: mitre-attack
+logsource:
+  category: container
+  product: kubernetes
+detection:
+  selection_method:
+    verb|contains|any:
+      - 'create'
+      - 'patch'
+      - 'update'
+  selection_resource:
+    objectRef.resource|contains|any:
+      - 'clusterrolebindings'
+      - 'rolebindings'
+  selection_role_cluster_admin:
+    roleRef.name|contains|any:
+      - 'cluster-admin'
+      - 'sudo'
+      - 'super-admin'
+      - 'superuser'
+  selection_role_masters_group:
+    user.groups|contains|any:
+      - 'system:masters'
+      - 'system:node'
+  condition: selection_method and selection_resource and 1 of selection_role_*
+falsepositives:
+  - Cluster bootstrapping by platform engineering teams
+  - GitOps tool reconciliations during cluster initialization
+  - Authorized incident response teams creating emergency access bindings
+level: high
