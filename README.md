@@ -176,11 +176,25 @@ sigmac -t elastic --format json rules/execution/unix-shell-execution.yml
 
 ## Future Roadmap
 
+### Detection Engineering Maturity
+- [ ] **Detection-as-Code test harness** — validate each rule against true-positive / true-negative log fixtures (not just syntax), using sigma-cli + backend converters
+- [ ] **Rule metadata enrichment** — add measurable `falsepositives`, alert-return `fields`, and `related` rule chaining for production-grade rules
+
+### Coverage & Visibility
 - [x] Linux/macOS detection rules (T1059.004, T1543.002, T1548.003, T1003.008, T1070.004, T1543.001, T1560.001)
-- [ ] Add cloud detection rules (AWS CloudTrail, Azure Activity Logs)
+- [ ] **ATT&CK Navigator Layer JSON export** — visual coverage heatmap
+- [ ] **Cloud detection rules** (AWS CloudTrail, Azure Activity Logs, GCP Audit Logs)
+- [ ] **Container / Kubernetes runtime rules** — Falco-style (crypto-mining, container escape, kubectl abuse)
+
+### Operational Realism
+- [ ] **Emulation mapping** — link each rule to an Atomic Red Team test ID for purple-team validation
+- [ ] **Rule triage / severity scoring model** — risk score = severity × asset criticality × confidence
+- [ ] **Sigma → multi-SIEM compilation matrix** — auto-compile to Splunk SPL, Elastic DSL, Sentinel KQL, Chronicle YARA-L
+
+### Analysis & Extras
+- [ ] **Coverage gap analysis** — compare against full ATT&CK matrix, generate "missing techniques" report
+- [ ] **MITRE D3FEND mapping** — pair each detection with a defensive countermeasure
 - [ ] Add correlation rules (multi-event sequences)
-- [ ] Add ATT&CK Navigator Layer JSON export
-- [ ] Add Sigma correlation detection rules
 - [ ] Performance benchmarking against real event volumes
 
 ---
