@@ -1,0 +1,14 @@
+{
+  "rule_id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
+  "expected": true,
+  "title": "TP - Encoded PowerShell command with bypass",
+  "description": "Suspicious PowerShell: -enc with execution policy bypass and hidden window",
+  "log": {
+    "CommandLine": "powershell.exe -nop -w hidden -ep bypass -enc SQBFAFgAIAAoAE0AZQBtAGIAZQByAFMAdAByAGkAbgBnACkA",
+    "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "ParentImage": "C:\\Windows\\System32\\cmd.exe",
+    "User": "CORP\\jsmith",
+    "EventID": 1,
+    "UtcTime": "2024-07-23 12:34:56.789"
+  }
+}

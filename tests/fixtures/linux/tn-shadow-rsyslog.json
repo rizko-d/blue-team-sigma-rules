@@ -1,0 +1,14 @@
+{
+  "rule_id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+  "expected": false,
+  "title": "TN - Normal syslog read by authorized process",
+  "description": "Normal syslog daemon reading /var/log/auth.log - no shadow file access, no suspicious binary",
+  "log": {
+    "Image": "/usr/sbin/rsyslogd",
+    "CommandLine": "/usr/sbin/rsyslogd -n",
+    "TargetFilename": "/var/log/auth.log",
+    "User": "root",
+    "EventID": 11,
+    "UtcTime": "2024-07-23 10:15:00.000"
+  }
+}

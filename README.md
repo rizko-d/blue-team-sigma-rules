@@ -42,7 +42,16 @@ blue-team-sigma-rules/
 │   ├── exfiltration/           # 3 rules (T1048)
 │   └── impact/                 # 1 rule (T1490)
 ├── tests/
-│   └── test_rules.py           # 387 unit tests (7 tests per rule)
+│   ├── test_harness/
+│   │   └── matcher.py           # Sigma detection logic evaluator
+│   ├── test_rules.py            # 387 syntax/coverage tests
+│   ├── test_detection.py        # Detection-as-Code: TP/TN log fixtures
+│   └── fixtures/                # True-positive & true-negative log samples
+│       ├── windows/
+│       ├── linux/
+│       ├── aws/
+│       ├── azure/
+│       └── gcp/
 ├── scripts/
 │   ├── check_mitre_coverage.py # Coverage analysis
 │   ├── validate_mitre_tags.py  # Tag validation
@@ -140,8 +149,14 @@ The GitHub Actions workflow (`sigma-test.yml`) runs on every push/PR:
 ## Local Usage
 
 ```bash
-# Run all tests
+# Run all tests (syntax + coverage + detection)
 python3 -m pytest tests/ -v
+
+# Run only detection-as-code tests (TP/TN fixtures)
+python3 -m pytest tests/test_detection.py -v
+
+# Run only syntax validation tests
+python3 -m pytest tests/test_rules.py -v
 
 # Check MITRE coverage
 python3 scripts/check_mitre_coverage.py
@@ -192,7 +207,7 @@ sigmac -t elastic --format json rules/execution/unix-shell-execution.yml
 ## Future Roadmap
 
 ### Detection Engineering Maturity
-- [ ] **Detection-as-Code test harness** — validate each rule against true-positive / true-negative log fixtures (not just syntax), using sigma-cli + backend converters
+- [x] **Detection-as-Code test harness** — validate each rule against true-positive / true-negative log fixtures (not just syntax), using sigma-cli + backend converters
 - [ ] **Rule metadata enrichment** — add measurable `falsepositives`, alert-return `fields`, and `related` rule chaining for production-grade rules
 
 ### Coverage & Visibility

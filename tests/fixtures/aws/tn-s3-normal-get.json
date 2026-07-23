@@ -1,0 +1,18 @@
+{
+  "rule_id": "d4b5c2e1-f3a6-4b89-8c7d-0e1f2a3b4c5d",
+  "expected": false,
+  "title": "TN - S3 GetObject from authorized internal service",
+  "description": "Normal S3 object retrieval by authorized AWS service, no public ACL change",
+  "log": {
+    "EventName": "GetObject",
+    "requestParameters": {
+      "bucketName": "internal-app-assets",
+      "key": "config/production.json"
+    },
+    "userIdentity": {
+      "arn": "arn:aws:iam::123456789012:role/ecs-task-role"
+    },
+    "sourceIPAddress": "10.0.1.50",
+    "eventTime": "2024-07-23T08:00:00Z"
+  }
+}

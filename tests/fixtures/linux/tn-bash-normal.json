@@ -1,0 +1,14 @@
+{
+  "rule_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "expected": false,
+  "title": "TN - Normal bash script execution",
+  "description": "Benign bash execution running a system update, no suspicious patterns",
+  "log": {
+    "CommandLine": "bash /usr/local/bin/backup.sh --incremental /home /backup",
+    "Image": "/usr/bin/bash",
+    "ParentImage": "/usr/sbin/cron",
+    "User": "root",
+    "EventID": 1,
+    "UtcTime": "2024-07-23 04:00:00.000"
+  }
+}

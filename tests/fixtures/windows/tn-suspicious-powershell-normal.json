@@ -1,0 +1,14 @@
+{
+  "rule_id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
+  "expected": false,
+  "title": "TN - Normal PowerShell with no suspicious flags",
+  "description": "Legitimate PowerShell: simple Get-Process, no encoded/obfuscated patterns",
+  "log": {
+    "CommandLine": "powershell.exe Get-Process -Name explorer",
+    "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "ParentImage": "C:\\Windows\\System32\\cmd.exe",
+    "User": "CORP\\jsmith",
+    "EventID": 1,
+    "UtcTime": "2024-07-23 08:00:00.000"
+  }
+}

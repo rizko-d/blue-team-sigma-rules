@@ -1,0 +1,14 @@
+{
+  "rule_id": "33333333-4444-5555-6666-777777777777",
+  "expected": false,
+  "title": "TN - Normal rundll32 legitimate use",
+  "description": "Benign rundll32 for standard Windows function, no MiniDump or lsass reference",
+  "log": {
+    "CommandLine": "rundll32.exe C:\\Windows\\System32\\ieframe.dll, OpenURL https://example.com",
+    "Image": "C:\\Windows\\System32\\rundll32.exe",
+    "ParentImage": "C:\\Windows\\System32\\svchost.exe",
+    "User": "CORP\\jsmith",
+    "EventID": 1,
+    "UtcTime": "2024-07-23 09:30:00.000"
+  }
+}

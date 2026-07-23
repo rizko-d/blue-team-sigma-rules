@@ -1,0 +1,24 @@
+{
+  "rule_id": "d4b5c2e1-f3a6-4b89-8c7d-0e1f2a3b4c5d",
+  "expected": true,
+  "title": "TP - S3 bucket ACL set to AllUsers public read",
+  "description": "Attacker makes S3 bucket publicly accessible via PutBucketAcl with AllUsers grantee",
+  "log": {
+    "EventName": "PutBucketAcl",
+    "requestParameters": {
+      "AccessControlPolicy": {
+        "AccessControlList": {
+          "Grantee": {
+            "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
+          }
+        }
+      },
+      "bucketName": "corp-secret-data-backup"
+    },
+    "userIdentity": {
+      "arn": "arn:aws:iam::123456789012:user/malicious_user"
+    },
+    "sourceIPAddress": "203.0.113.50",
+    "eventTime": "2024-07-23T16:45:00Z"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "rule_id": "33333333-4444-5555-6666-777777777777",
+  "expected": true,
+  "title": "TP - LSASS dump via comsvcs.dll with rundll32",
+  "description": "Mimikatz-style LSASS memory dump using comsvcs.dll Minidump function via rundll32",
+  "log": {
+    "CommandLine": "rundll32.exe C:\\Windows\\System32\\comsvcs.dll, MiniDump 1234 lsass.dmp full",
+    "Image": "C:\\Windows\\System32\\rundll32.exe",
+    "ParentImage": "C:\\Windows\\System32\\cmd.exe",
+    "User": "CORP\\admin",
+    "EventID": 1,
+    "UtcTime": "2024-07-23 03:15:00.000"
+  }
+}

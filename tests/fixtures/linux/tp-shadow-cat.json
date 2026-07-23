@@ -1,0 +1,14 @@
+{
+  "rule_id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+  "expected": true,
+  "title": "TP - /etc/shadow read via cat",
+  "description": "Attacker uses cat to read shadow file for offline password cracking",
+  "log": {
+    "Image": "/usr/bin/cat",
+    "CommandLine": "cat /etc/shadow",
+    "TargetFilename": "/etc/shadow",
+    "User": "www-data",
+    "EventID": 11,
+    "UtcTime": "2024-07-23 02:00:00.000"
+  }
+}
